@@ -4582,11 +4582,11 @@ window.WUYOU = {
     '  gl_Position = vec4(ndc, 0.0, 1.0);',
     '  float twinkle = 0.62 + 0.38 * sin(t * (0.66 + aSeed) + aSeed * 21.0);',
     '  float depthFade = clamp((9.7 - z) / 5.4, 0.0, 1.0);',
-    '  vAlpha = twinkle * (0.9 + l * 0.1) * depthFade * mix(0.82, 1.0, uReveal) * mix(1.0, 0.28, uGlow) * 2.8;',
+    '  vAlpha = twinkle * (0.9 + l * 0.1) * depthFade * mix(0.82, 1.0, uReveal) * mix(1.0, 0.28, uGlow) * 1.9;',
     '  vec3 cool = vec3(0.40, 0.62, 1.0);',
     '  vec3 warm = vec3(1.0, 0.72, 0.38);',
     '  vColor = mix(cool, warm, aTint);',
-    '  gl_PointSize = clamp(aSize * uDpr * (58.0 / z), 1.8, 26.0) * mix(1.0, 2.6, uGlow);',
+    '  gl_PointSize = clamp(aSize * uDpr * (42.0 / z), 1.5, 18.0) * mix(1.0, 2.8, uGlow);',
     '}'
   ].join('\n');
 
@@ -4810,7 +4810,7 @@ window.WUYOU = {
   }
 
   var W = 1, H = 1, aspect = 1;
-  var pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  var pointer = { x: 0, y: 0, tx: 0, ty: 0, active: false };
   var state = {
     p: 0, hero: 0, converge: 0,
     reveal: 0, burst: 0, burstX: 0, burstY: 0,
@@ -4886,7 +4886,7 @@ window.WUYOU = {
       gl.uniform1f(hair.u.reveal, state.reveal);
       gl.uniform1f(hair.u.converge, state.converge);
       gl.uniform1f(hair.u.burst, state.burst);
-      gl.uniform1f(hair.u.attract, state.hero < 0.42 ? 0.72 : 0.24);
+      gl.uniform1f(hair.u.attract, (state.hero < 0.42 ? 0.55 : 0.18) * (pointer.active ? 1 : 0));
       gl.uniform1f(hair.u.dpr, DPR);
       gl.uniform1f(hair.u.aspect, aspect);
       gl.uniform2f(hair.u.mouse, pointer.x, pointer.y);
@@ -4901,7 +4901,7 @@ window.WUYOU = {
       gl.useProgram(title.program);
       gl.uniform1f(title.u.time, t);
       gl.uniform1f(title.u.reveal, state.reveal);
-      gl.uniform1f(title.u.fade, state.fade);
+      gl.uniform1f(title.u.fade, state.fade * 0.38);
       gl.uniform1f(title.u.dpr, DPR);
       gl.uniform1f(title.u.aspect, aspect);
       gl.drawArrays(gl.POINTS, 0, title.n);
@@ -4965,6 +4965,7 @@ window.WUYOU = {
     if (COARSE) return;
     pointer.tx = (e.clientX / W) * 2 - 1;
     pointer.ty = 1 - (e.clientY / H) * 2;
+    pointer.active = true;
   }, { passive: true });
 
   document.addEventListener('pointerdown', function (e) {
