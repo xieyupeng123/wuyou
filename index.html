@@ -3425,10 +3425,370 @@ body.has-cursor:not(:hover) .cursor-ring { opacity: 0; }
   .whispers__line { font-size: 15.5px; line-height: 1.8; }
   .whispers__foot { text-align: left; }
 }
+
+/* ============================================================
+   V3 · CINEMA — one continuous night
+   ============================================================ */
+:root {
+  --void: #04060b;
+  --moon: #e7edf7;
+  --violet: #9aa9d8;
+  --line: rgba(230, 238, 255, 0.11);
+  --glass: linear-gradient(145deg, rgba(255, 255, 255, 0.095), rgba(255, 255, 255, 0.022) 44%, rgba(255, 255, 255, 0.052));
+  --glass-edge: rgba(255, 255, 255, 0.18);
+  --scroll: 0;
+}
+
+#cosmos {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2.4s ease;
+}
+body.is-ready #cosmos { opacity: 1; }
+body.no-webgl #cosmos { display: none; }
+main { position: relative; z-index: 2; }
+.nav, .chapter-rail, .scroll-progress, .dock { z-index: 50; }
+
+.hero {
+  background:
+    radial-gradient(70% 60% at 50% 38%, rgba(34, 48, 82, 0.34), transparent 70%),
+    radial-gradient(40% 40% at 72% 58%, rgba(125, 93, 52, 0.10), transparent 72%);
+}
+.hero__bg .aurora { opacity: 0.34; filter: blur(110px); }
+.hero__bg .orb {
+  width: min(52vw, 580px);
+  opacity: 0.55;
+  border-color: rgba(201, 218, 250, 0.10);
+  box-shadow: inset 0 0 120px rgba(140, 170, 240, 0.08), 0 0 190px rgba(70, 110, 200, 0.12);
+}
+.hero__vignette {
+  background:
+    radial-gradient(circle at 50% 42%, transparent 30%, rgba(4, 6, 12, 0.10) 58%, rgba(4, 6, 12, 0.62) 90%),
+    linear-gradient(180deg, rgba(4, 6, 12, 0.30) 0%, transparent 18%, transparent 67%, var(--bg) 100%);
+}
+.hero__content {
+  z-index: 3;
+  transform: translate3d(0, calc(var(--hero, 0) * -6vh), 0) scale(calc(1 - var(--hero, 0) * 0.035));
+  opacity: calc(1 - var(--hero, 0) * 0.74);
+  transform-origin: 50% 40%;
+  will-change: transform, opacity;
+}
+.hero__bg {
+  transform: scale(calc(1 + var(--hero, 0) * 0.06));
+  transform-origin: 50% 42%;
+  will-change: transform;
+}
+.hero__moon {
+  position: absolute;
+  top: -1vh;
+  right: -16vw;
+  z-index: 1;
+  width: min(36vw, 480px);
+  height: auto;
+  opacity: 0.36;
+  filter:
+    saturate(0.62)
+    brightness(0.62)
+    drop-shadow(0 0 90px rgba(186, 207, 244, 0.20))
+    drop-shadow(0 0 220px rgba(112, 144, 208, 0.14));
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transform: rotate(-9deg);
+  transform-origin: 50% 50%;
+  animation: heroMoonDrift 18s ease-in-out infinite alternate;
+}
+@keyframes heroMoonDrift {
+  from { transform: translate3d(0, -8px, 0) rotate(-7deg); }
+  to { transform: translate3d(-14px, 12px, 0) rotate(-5.4deg); }
+}
+
+.hero__title-wrap {
+  perspective: 900px;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.85s var(--ease-soft);
+  will-change: transform;
+}
+.hero__title {
+  font-size: clamp(7.5rem, 20vw, 16.5rem);
+  gap: 0.045em;
+  letter-spacing: 0.015em;
+  background: linear-gradient(178deg, #ffffff 2%, #eef4ff 18%, #c0cde3 40%, #e6d3b1 72%, #a98d62 100%);
+  background-size: 100% 260%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+  transform: translate3d(0, 16px, 0) scale(1.035);
+  filter:
+    drop-shadow(0 28px 70px rgba(0, 0, 0, 0.62))
+    drop-shadow(0 0 54px rgba(169, 196, 239, 0.14));
+  will-change: opacity, transform, filter;
+}
+body.is-ready .hero__title {
+  animation: titleForge 2.3s cubic-bezier(.16, 1, .3, 1) .16s both;
+}
+@keyframes titleForge {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(1.035);
+    filter: blur(16px) drop-shadow(0 0 70px rgba(169, 196, 239, 0));
+  }
+  55% { opacity: 1; }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0) drop-shadow(0 28px 70px rgba(0, 0, 0, 0.62)) drop-shadow(0 0 54px rgba(169, 196, 239, 0.14));
+  }
+}
+.hero__title::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -0.1em;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(230, 197, 140, 0.55), transparent);
+  opacity: 0.7;
+  pointer-events: none;
+}
+.hero__ghost {
+  font-size: clamp(7.5rem, 20vw, 16.5rem);
+  letter-spacing: 0.015em;
+  opacity: 0.72;
+  -webkit-text-stroke-color: rgba(214, 227, 255, 0.075);
+  transform: translate(-50%, -50%) translate(15px, 15px);
+}
+.hero__chips { filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.5)); }
+.hero__title-wrap { margin-bottom: clamp(38px, 5.4vh, 54px); }
+.hero .counter { margin-top: clamp(18px, 3.2vh, 30px); }
+
+.chapter-rail {
+  position: fixed;
+  left: 26px;
+  top: 50%;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  transform: translateY(-50%);
+  font-family: var(--sans);
+}
+.chapter-rail a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(243, 239, 230, 0.34);
+  text-decoration: none;
+  transition: color 0.45s ease, gap 0.45s var(--ease);
+}
+.chapter-rail i {
+  display: block;
+  width: 14px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0.55);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease), background 0.45s ease;
+}
+.chapter-rail span {
+  font-size: 7px;
+  letter-spacing: 0.16em;
+  opacity: 0.7;
+}
+.chapter-rail b {
+  font-family: var(--serif);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.45s ease, transform 0.45s var(--ease);
+}
+.chapter-rail a:hover,
+.chapter-rail a.is-active { color: rgba(243, 223, 184, 0.92); gap: 11px; }
+.chapter-rail a:hover i,
+.chapter-rail a.is-active i { transform: scaleX(1); background: var(--gold); }
+.chapter-rail a:hover b,
+.chapter-rail a.is-active b { opacity: 1; transform: none; }
+
+.nav {
+  background: linear-gradient(180deg, rgba(6, 8, 13, 0.72), rgba(6, 8, 13, 0.18));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(26px) saturate(1.35);
+  -webkit-backdrop-filter: blur(26px) saturate(1.35);
+}
+.nav.is-solid {
+  background: linear-gradient(180deg, rgba(5, 7, 12, 0.90), rgba(5, 7, 12, 0.58));
+  border-bottom-color: rgba(230, 238, 255, 0.08);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+}
+.nav-btn {
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.018));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 30px rgba(0, 0, 0, 0.18);
+  transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s var(--ease);
+}
+.nav-btn:hover {
+  border-color: rgba(230, 197, 140, 0.36);
+  background: linear-gradient(145deg, rgba(230, 197, 140, 0.11), rgba(255, 255, 255, 0.025));
+  transform: translateY(-1px);
+}
+
+.counter {
+  border-color: rgba(214, 227, 255, 0.17);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.022) 38%, rgba(255, 255, 255, 0.06)),
+    radial-gradient(80% 120% at 22% 0%, rgba(169, 196, 239, 0.10), transparent 60%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.035),
+    0 24px 80px rgba(0, 0, 0, 0.38),
+    0 0 70px rgba(126, 157, 219, 0.06);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+}
+.counter::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg, transparent 23%, rgba(255, 255, 255, 0.16) 42%, transparent 52%),
+    radial-gradient(circle at var(--gx, 30%) var(--gy, 20%), rgba(255, 255, 255, 0.16), transparent 22%);
+  opacity: 0.5;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.counter > * { position: relative; z-index: 1; }
+.counter__num {
+  font-variant-numeric: tabular-nums lining-nums;
+  text-shadow: 0 0 30px rgba(214, 227, 255, 0.18);
+}
+
+.night {
+  background: transparent;
+  min-height: 820px;
+}
+.night__sky {
+  background:
+    radial-gradient(980px 700px at 76% 42%, rgba(111, 137, 179, 0.16), transparent 66%),
+    radial-gradient(700px 500px at 18% 78%, rgba(122, 88, 52, 0.08), transparent 72%),
+    linear-gradient(180deg, rgba(4, 6, 11, 0.48) 0%, rgba(4, 6, 11, 0.14) 38%, rgba(4, 6, 10, 0.20) 62%, rgba(5, 7, 12, 0.76) 100%);
+}
+.night__moon-wrap { animation: moonFloat 14s ease-in-out infinite alternate; }
+@keyframes moonFloat {
+  from { transform: translate3d(0, 8px, 0) rotate(-0.35deg); }
+  to { transform: translate3d(0, -10px, 0) rotate(0.35deg); }
+}
+.night__moon {
+  filter:
+    drop-shadow(0 0 80px rgba(196, 214, 245, 0.15))
+    drop-shadow(0 0 180px rgba(126, 157, 219, 0.09));
+}
+.night__moon-wrap::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196, 214, 245, 0.12), transparent 62%);
+  filter: blur(28px);
+  pointer-events: none;
+}
+.night__orbit { border-color: rgba(230, 238, 255, 0.12); }
+.night__time { text-shadow: 0 0 100px rgba(169, 196, 239, 0.08); }
+
+.prologue {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.60),
+    inset 0 0 100px rgba(117, 96, 62, 0.055),
+    0 -30px 90px rgba(4, 6, 11, 0.24);
+}
+
+.pact-card, .memory-card {
+  will-change: transform;
+}
+.pact-card {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.014) 48%, rgba(255, 255, 255, 0.035));
+  border-color: rgba(230, 238, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.pact-card:hover {
+  border-color: rgba(230, 197, 140, 0.24);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.section-head::after {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 1px;
+  margin-top: 18px;
+  background: linear-gradient(90deg, rgba(230, 197, 140, 0.65), transparent);
+}
+
+.dock {
+  border-color: rgba(230, 238, 255, 0.13);
+  background: linear-gradient(145deg, rgba(22, 28, 40, 0.78), rgba(7, 10, 17, 0.62));
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(28px) saturate(1.5);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+}
+
+.memory-card--photo img { transition: transform 1.4s var(--ease), filter 1.4s ease; }
+.memory-card--photo:hover img { filter: saturate(1.08) brightness(1.04); }
+
+.modal, .lightbox__frame {
+  border-color: rgba(230, 238, 255, 0.15);
+  background: linear-gradient(145deg, rgba(24, 30, 43, 0.92), rgba(8, 11, 18, 0.92));
+  backdrop-filter: blur(34px) saturate(1.35);
+  -webkit-backdrop-filter: blur(34px) saturate(1.35);
+}
+
+@media (max-width: 1180px) {
+  .chapter-rail { display: none; }
+}
+@media (max-width: 760px) {
+  .hero__title { font-size: clamp(5.6rem, 27vw, 10rem); }
+  .hero__ghost { font-size: clamp(5.6rem, 27vw, 10rem); }
+  .hero__title::after { bottom: -0.18em; }
+  .hero .counter { margin-top: 14px; }
+  .hero__bg .orb { width: 84vw; opacity: 0.40; }
+  .hero__bg .aurora { opacity: 0.26; }
+  .hero__moon { width: 80vw; right: -44vw; top: 12vh; opacity: 0.30; animation: none; }
+  .counter::after { opacity: 0.32; }
+  .night__moon-wrap { animation: none; }
+  .nav { backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #cosmos { display: none; }
+  .hero__title-wrap { transform: none !important; }
+  .hero__moon { animation: none; }
+  .hero__title {
+    opacity: 1;
+    transform: none;
+    filter:
+      drop-shadow(0 28px 70px rgba(0, 0, 0, 0.62))
+      drop-shadow(0 0 54px rgba(169, 196, 239, 0.14));
+    animation: none !important;
+  }
+  .night__moon-wrap { animation: none; }
+}
 </style>
   <meta name="wuyou-build" content="single-file · inline css/js/fonts">
 </head>
 <body>
+  <canvas id="cosmos" aria-hidden="true"></canvas>
+
   <div class="boot" id="boot" aria-hidden="true">
     <div class="boot__top"><span>PRIVATE ARCHIVE</span><span>NO. 001 / 2026</span></div>
     <div class="boot__inner">
@@ -3441,6 +3801,15 @@ body.has-cursor:not(:hover) .cursor-ring { opacity: 0; }
   </div>
 
   <div class="scroll-progress" aria-hidden="true"><span id="scrollBar"></span></div>
+
+  <aside class="chapter-rail" aria-label="章节进度">
+    <a href="#top" data-chapter="top"><i></i><span>00</span><b>序</b></a>
+    <a href="#prologue" data-chapter="prologue"><i></i><span>01</span><b>夜</b></a>
+    <a href="#conversation" data-chapter="conversation"><i></i><span>02</span><b>话</b></a>
+    <a href="#archive" data-chapter="archive"><i></i><span>03</span><b>藏</b></a>
+    <a href="#pact" data-chapter="pact"><i></i><span>04</span><b>约</b></a>
+    <a href="#future" data-chapter="future"><i></i><span>05</span><b>续</b></a>
+  </aside>
 
   <header class="nav" id="siteNav">
     <a class="nav__brand" href="#top" aria-label="回到顶部">
@@ -3478,7 +3847,7 @@ body.has-cursor:not(:hover) .cursor-ring { opacity: 0; }
           <span class="orb__ring orb__ring--two"></span>
           <span class="orb__dot"></span>
         </div>
-        <canvas id="stars"></canvas>
+        <img class="hero__moon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MDAgNjAwIiByb2xlPSJwcmVzZW50YXRpb24iPgogIDxkZWZzPgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJtb29uU3VyZmFjZSIgY3g9IjM0JSIgY3k9IjI4JSIgcj0iNzglIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZjdmMmU3Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iLjIiIHN0b3AtY29sb3I9IiNlNGRlZDEiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIuNDIiIHN0b3AtY29sb3I9IiNjN2MxYjQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiM5ZDk5OGYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIuOCIgc3RvcC1jb2xvcj0iIzY1NjQ1ZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii45MyIgc3RvcC1jb2xvcj0iIzM2Mzk0MCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxYTFlMjYiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9Im1vb25TaGFkZSIgY3g9IjMzJSIgY3k9IjI3JSIgcj0iNzIlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIuNDgiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii42NiIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIuMDgiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIuODYiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iLjQyIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIuNjgiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CiAgICA8ZmlsdGVyIGlkPSJtb29uU29mdCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+CiAgICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjEuMiIvPgogICAgPC9maWx0ZXI+CiAgICA8Y2xpcFBhdGggaWQ9Im1vb25DbGlwIj48Y2lyY2xlIGN4PSIzMDAiIGN5PSIzMDAiIHI9IjI5OSIvPjwvY2xpcFBhdGg+CiAgPC9kZWZzPgogIDxjaXJjbGUgY3g9IjMwMCIgY3k9IjMwMCIgcj0iMzAwIiBmaWxsPSJ1cmwoI21vb25TdXJmYWNlKSIvPgogIDxnIGNsaXAtcGF0aD0idXJsKCNtb29uQ2xpcCkiIGZpbHRlcj0idXJsKCNtb29uU29mdCkiPgogICAgPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjIxMCIgcng9IjEwOCIgcnk9IjgyIiBmaWxsPSIjNjE1ZDU1IiBvcGFjaXR5PSIuMDciLz4KICAgIDxlbGxpcHNlIGN4PSI0MzAiIGN5PSIxODQiIHJ4PSI3NiIgcnk9IjYwIiBmaWxsPSIjNmI2NjVkIiBvcGFjaXR5PSIuMDYiLz4KICAgIDxlbGxpcHNlIGN4PSIzNDAiIGN5PSI0NTUiIHJ4PSIxMDIiIHJ5PSI2OCIgZmlsbD0iIzVjNTk1MiIgb3BhY2l0eT0iLjA1NSIvPgogICAgPGcgZmlsbD0iIzRlNGQ0YSIgb3BhY2l0eT0iLjI0Ij4KICAgICAgPGNpcmNsZSBjeD0iMzgyIiBjeT0iMzgyIiByPSIyMyIvPgogICAgICA8Y2lyY2xlIGN4PSIxNzYiIGN5PSI0MjAiIHI9IjE1Ii8+CiAgICAgIDxjaXJjbGUgY3g9IjQ1OCIgY3k9IjM2MCIgcj0iMTIiLz4KICAgICAgPGNpcmNsZSBjeD0iMzA4IiBjeT0iMTkwIiByPSIxMCIvPgogICAgICA8Y2lyY2xlIGN4PSIyMzAiIGN5PSIzMDAiIHI9IjkiLz4KICAgICAgPGNpcmNsZSBjeD0iNTA1IiBjeT0iMjUwIiByPSI4Ii8+CiAgICAgIDxjaXJjbGUgY3g9IjM5MCIgY3k9IjUwMCIgcj0iNyIvPgogICAgICA8Y2lyY2xlIGN4PSIxNTIiIGN5PSIyMzYiIHI9IjYiLz4KICAgICAgPGNpcmNsZSBjeD0iMjcwIiBjeT0iNTEwIiByPSI1Ii8+CiAgICAgIDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjQ3MCIgcj0iNSIvPgogICAgICA8Y2lyY2xlIGN4PSIxMjAiIGN5PSIzMzAiIHI9IjQiLz4KICAgICAgPGNpcmNsZSBjeD0iMzUwIiBjeT0iMjYwIiByPSI0Ii8+CiAgICAgIDxjaXJjbGUgY3g9IjQzMCIgY3k9IjI5MCIgcj0iNCIvPgogICAgICA8Y2lyY2xlIGN4PSIyMDUiIGN5PSI0NzAiIHI9IjQiLz4KICAgICAgPGNpcmNsZSBjeD0iMzI1IiBjeT0iMTUwIiByPSIzLjUiLz4KICAgICAgPGNpcmNsZSBjeD0iNTIwIiBjeT0iNDAwIiByPSIzLjUiLz4KICAgICAgPGNpcmNsZSBjeD0iMTUwIiBjeT0iMzAwIiByPSIzIi8+CiAgICAgIDxjaXJjbGUgY3g9IjI5MCIgY3k9IjM2MCIgcj0iMyIvPgogICAgICA8Y2lyY2xlIGN4PSI0MTAiIGN5PSIyMjAiIHI9IjMiLz4KICAgIDwvZz4KICAgIDxnIGZpbGw9IiNmMmVjZGUiIG9wYWNpdHk9Ii4xNCI+CiAgICAgIDxwYXRoIGQ9Ik0zNjAgMzYyYTIzIDIzIDAgMCAxIDM3IDEzIDIwIDIwIDAgMCAwLTM2LTV6Ii8+CiAgICAgIDxwYXRoIGQ9Ik0xNTggNDA4YTE1IDE1IDAgMCAxIDI0IDggMTMgMTMgMCAwIDAtMjMtMnoiLz4KICAgICAgPHBhdGggZD0iTTQ0NCAzNDhhMTIgMTIgMCAwIDEgMTggNiAxMCAxMCAwIDAgMC0xNy0yeiIvPgogICAgPC9nPgogICAgPGcgZmlsbD0iIzM0MzYzYSIgb3BhY2l0eT0iLjE4Ij4KICAgICAgPGNpcmNsZSBjeD0iMzgyIiBjeT0iMzgyIiByPSIxMyIvPgogICAgICA8Y2lyY2xlIGN4PSIxNzYiIGN5PSI0MjAiIHI9IjkiLz4KICAgICAgPGNpcmNsZSBjeD0iNDU4IiBjeT0iMzYwIiByPSI3Ii8+CiAgICA8L2c+CiAgPC9nPgogIDxjaXJjbGUgY3g9IjMwMCIgY3k9IjMwMCIgcj0iMzAwIiBmaWxsPSJ1cmwoI21vb25TaGFkZSkiLz4KICA8Y2lyY2xlIGN4PSIzMDAiIGN5PSIzMDAiIHI9IjI5OSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjNlZmU2IiBzdHJva2Utb3BhY2l0eT0iLjIyIi8+Cjwvc3ZnPg==" alt="" aria-hidden="true">
         <div class="hero__vignette"></div>
       </div>
 
@@ -3486,8 +3855,8 @@ body.has-cursor:not(:hover) .cursor-ring { opacity: 0; }
         <p class="eyebrow hero-reveal">A FRIENDSHIP ARCHIVE <span>·</span> NO. 001</p>
 
         <div class="hero__title-wrap">
-          <div class="hero__ghost" aria-hidden="true">挚友</div>
-          <h1 class="hero__title" aria-label="挚友"><span>挚</span><span>友</span></h1>
+          <div class="hero__ghost" aria-hidden="true">無有</div>
+          <h1 class="hero__title" aria-label="無有"><span>無</span><span>有</span></h1>
           <div class="hero__chips" aria-hidden="true">
             <span class="chip chip--date"><i></i>03:40 AM</span>
             <span class="chip chip--forever">有效期 · 永久</span>
@@ -4135,6 +4504,504 @@ window.WUYOU = {
 </script>
   <script>
 /* ============================================================
+   無有 · 星尘引擎
+   A small, dependency-free WebGL particle field.
+   One canvas, one loop, two passes: ambient dust + title dust.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var canvas = document.getElementById('cosmos');
+  if (!canvas) return;
+
+  var root = document.documentElement;
+  var REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var MOBILE = matchMedia('(max-width: 760px)').matches;
+  var COARSE = matchMedia('(pointer: coarse)').matches;
+  var DPR = Math.min(MOBILE ? 1.35 : 1.6, window.devicePixelRatio || 1);
+  var gl = null;
+
+  try {
+    gl = canvas.getContext('webgl2', {
+      alpha: true, antialias: false, depth: false, stencil: false,
+      premultipliedAlpha: false, powerPreference: 'high-performance'
+    });
+    if (!gl) {
+      gl = canvas.getContext('webgl', {
+        alpha: true, antialias: false, depth: false, stencil: false,
+        premultipliedAlpha: false, powerPreference: 'high-performance'
+      });
+    }
+  } catch (err) { gl = null; }
+
+  if (!gl) {
+    root.classList.add('no-webgl');
+    canvas.classList.add('is-hidden');
+    return;
+  }
+
+  var AMBIENT_VS = [
+    'attribute vec3 aBase;',
+    'attribute float aSeed;',
+    'attribute float aSize;',
+    'attribute float aTint;',
+    'attribute float aLayer;',
+    'uniform float uTime;',
+    'uniform float uScroll;',
+    'uniform float uReveal;',
+    'uniform float uConverge;',
+    'uniform float uBurst;',
+    'uniform float uAttract;',
+    'uniform float uDpr;',
+    'uniform float uAspect;',
+    'uniform float uGlow;',
+    'uniform vec2 uMouse;',
+    'uniform vec2 uBurstPos;',
+    'varying vec3 vColor;',
+    'varying float vAlpha;',
+    'void main() {',
+    '  float t = uTime;',
+    '  vec3 p = aBase;',
+    '  float l = aLayer;',
+    '  p.x += sin(t * (0.075 + l * 0.05) + aSeed * 6.2831 + p.y * 0.33) * (0.08 + l * 0.11);',
+    '  p.y += cos(t * (0.06 + l * 0.04) + aSeed * 5.1 + p.x * 0.21) * (0.06 + l * 0.09);',
+    '  p.z += sin(t * 0.05 + aSeed * 3.2) * 0.12;',
+    '  p.z -= uScroll * 2.4;',
+    '  p.y += uScroll * 0.42;',
+    '  vec2 m = uMouse * vec2(uAspect * 3.6, 2.5);',
+    '  vec2 d = p.xy - m;',
+    '  float dist = length(d);',
+    '  float force = (0.34 / (dist * dist + 0.42)) * uAttract;',
+    '  p.xy += normalize(d + vec2(0.0001)) * force * (0.55 + l * 0.45);',
+    '  vec2 ring = normalize(p.xy + vec2(0.0001)) * (1.15 + l * 0.9);',
+    '  p.xy = mix(p.xy, ring, uConverge * 0.22);',
+    '  vec2 bd = p.xy - uBurstPos;',
+    '  p.xy += normalize(bd + vec2(0.0001)) * uBurst * 0.55 / (length(bd) + 0.4);',
+    '  float z = 7.2 + p.z;',
+    '  vec2 ndc = vec2(p.x / (z * 0.62 * uAspect), p.y / (z * 0.62));',
+    '  gl_Position = vec4(ndc, 0.0, 1.0);',
+    '  float twinkle = 0.62 + 0.38 * sin(t * (0.66 + aSeed) + aSeed * 21.0);',
+    '  float depthFade = clamp((9.7 - z) / 5.4, 0.0, 1.0);',
+    '  vAlpha = twinkle * (0.88 + l * 0.12) * depthFade * mix(0.7, 1.0, uReveal) * mix(1.0, 0.22, uGlow);',
+    '  vec3 cool = vec3(0.46, 0.65, 0.98);',
+    '  vec3 warm = vec3(1.0, 0.78, 0.48);',
+    '  vColor = mix(cool, warm, aTint);',
+    '  gl_PointSize = clamp(aSize * uDpr * (26.0 / z), 1.2, 11.0) * mix(1.0, 3.4, uGlow);',
+    '}'
+  ].join('\n');
+
+  var AMBIENT_FS = [
+    'precision mediump float;',
+    'varying vec3 vColor;',
+    'varying float vAlpha;',
+    'void main() {',
+    '  vec2 q = gl_PointCoord - vec2(0.5);',
+    '  float d = length(q) * 2.0;',
+    '  float core = smoothstep(1.0, 0.0, d);',
+    '  float halo = pow(core, 2.4);',
+    '  float a = halo * vAlpha;',
+    '  if (a < 0.008) discard;',
+    '  gl_FragColor = vec4(vColor * (0.72 + halo * 0.8), a);',
+    '}'
+  ].join('\n');
+
+  var TITLE_VS = [
+    'attribute vec3 aTarget;',
+    'attribute vec3 aStart;',
+    'attribute float aSeed;',
+    'attribute float aSize;',
+    'uniform float uTime;',
+    'uniform float uReveal;',
+    'uniform float uFade;',
+    'uniform float uDpr;',
+    'uniform float uAspect;',
+    'varying vec3 vColor;',
+    'varying float vAlpha;',
+    'void main() {',
+    '  float r = smoothstep(0.0, 1.0, uReveal);',
+    '  vec3 p = mix(aStart, aTarget, r);',
+    '  p.x += sin(uTime * 0.48 + aSeed * 6.2831) * 0.018 * (1.0 - r);',
+    '  p.y += cos(uTime * 0.37 + aSeed * 4.7) * 0.018 * (1.0 - r);',
+    '  float z = 7.2 + p.z;',
+    '  vec2 ndc = vec2(p.x / (z * 0.62 * uAspect), p.y / (z * 0.62));',
+    '  gl_Position = vec4(ndc, 0.0, 1.0);',
+    '  gl_PointSize = clamp(aSize * uDpr * (8.5 / z), 0.8, 4.2);',
+    '  vec3 cool = vec3(0.74, 0.84, 1.0);',
+    '  vec3 warm = vec3(1.0, 0.87, 0.64);',
+    '  vColor = mix(cool, warm, aSeed);',
+    '  vAlpha = (0.3 + aSeed * 0.7) * uFade;',
+    '}'
+  ].join('\n');
+
+  var TITLE_FS = [
+    'precision mediump float;',
+    'varying vec3 vColor;',
+    'varying float vAlpha;',
+    'void main() {',
+    '  vec2 q = gl_PointCoord - vec2(0.5);',
+    '  float d = length(q) * 2.0;',
+    '  float a = pow(smoothstep(1.0, 0.0, d), 2.0);',
+    '  if (a < 0.02) discard;',
+    '  gl_FragColor = vec4(vColor, a * vAlpha);',
+    '}'
+  ].join('\n');
+
+  function compile(type, source) {
+    var sh = gl.createShader(type);
+    gl.shaderSource(sh, source);
+    gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      var log = gl.getShaderInfoLog(sh);
+      gl.deleteShader(sh);
+      throw new Error('shader: ' + log);
+    }
+    return sh;
+  }
+
+  function makeProgram(vsSource, fsSource) {
+    var vs = compile(gl.VERTEX_SHADER, vsSource);
+    var fs = compile(gl.FRAGMENT_SHADER, fsSource);
+    var p = gl.createProgram();
+    gl.attachShader(p, vs);
+    gl.attachShader(p, fs);
+    gl.linkProgram(p);
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+      throw new Error('program: ' + gl.getProgramInfoLog(p));
+    }
+    return p;
+  }
+
+  var hair = null;
+  var title = null;
+
+  function buffer(data) {
+    var b = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    return b;
+  }
+
+  function attrib(program, name, size, data) {
+    var loc = gl.getAttribLocation(program, name);
+    if (loc < 0) return null;
+    var b = buffer(data);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+    return { loc: loc, buffer: b };
+  }
+
+  function uniform(program, name) {
+    return gl.getUniformLocation(program, name);
+  }
+
+  function buildAmbient() {
+    var base, seed, size, tint, layer;
+    var n = REDUCE ? 900 : MOBILE ? 3600 : (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4 ? 6000 : 10500);
+    base = new Float32Array(n * 3);
+    seed = new Float32Array(n);
+    size = new Float32Array(n);
+    tint = new Float32Array(n);
+    layer = new Float32Array(n);
+    for (var i = 0; i < n; i++) {
+      var l = Math.random();
+      var spread = 0.84 + l * 0.22;
+      base[i * 3] = (Math.random() * 2 - 1) * 5.9 * spread;
+      base[i * 3 + 1] = (Math.random() * 2 - 1) * 3.5 * spread;
+      base[i * 3 + 2] = -1.8 + Math.random() * 3.0;
+      seed[i] = Math.random();
+      size[i] = 0.55 + Math.random() * 2.0 + l * 0.45;
+      tint[i] = Math.random() < 0.24 ? 0.72 + Math.random() * 0.28 : Math.random() * 0.14;
+      layer[i] = l;
+    }
+    var prog = makeProgram(AMBIENT_VS, AMBIENT_FS);
+    hair = {
+      program: prog,
+      n: n,
+      base: attrib(prog, 'aBase', 3, base),
+      seed: attrib(prog, 'aSeed', 1, seed),
+      size: attrib(prog, 'aSize', 1, size),
+      tint: attrib(prog, 'aTint', 1, tint),
+      layer: attrib(prog, 'aLayer', 1, layer),
+      u: {
+        time: uniform(prog, 'uTime'),
+        scroll: uniform(prog, 'uScroll'),
+        reveal: uniform(prog, 'uReveal'),
+        converge: uniform(prog, 'uConverge'),
+        burst: uniform(prog, 'uBurst'),
+        attract: uniform(prog, 'uAttract'),
+        dpr: uniform(prog, 'uDpr'),
+        aspect: uniform(prog, 'uAspect'),
+        glow: uniform(prog, 'uGlow'),
+        mouse: uniform(prog, 'uMouse'),
+        burstPos: uniform(prog, 'uBurstPos')
+      }
+    };
+  }
+
+  function buildTitle() {
+    if (title || REDUCE) return;
+    var cw = 1200;
+    var ch = 420;
+    var c = document.createElement('canvas');
+    c.width = cw;
+    c.height = ch;
+    var ctx = c.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return;
+
+    var family = getComputedStyle(root).getPropertyValue('--serif').trim() || 'serif';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '600 278px ' + family;
+    var chars = ['無', '有'];
+    var gap = 26;
+    var widths = chars.map(function (char) { return ctx.measureText(char).width; });
+    var total = widths[0] + widths[1] + gap;
+    var x = (cw - total) / 2;
+    var y = ch * 0.51;
+    for (var i = 0; i < chars.length; i++) {
+      ctx.fillText(chars[i], x + widths[i] / 2, y);
+      x += widths[i] + gap;
+    }
+
+    var data = ctx.getImageData(0, 0, cw, ch).data;
+    var step = MOBILE ? 6 : 4;
+    var max = MOBILE ? 2600 : 6200;
+    var targets = [], starts = [], seeds = [], sizes = [];
+    for (var py = 0; py < ch; py += step) {
+      for (var px = 0; px < cw; px += step) {
+        var alpha = data[(py * cw + px) * 4 + 3];
+        if (alpha < 138) continue;
+        if (targets.length / 3 >= max) break;
+        var jx = (Math.random() - 0.5) * 0.012;
+        var jy = (Math.random() - 0.5) * 0.02;
+        targets.push((px / cw - 0.5 + jx) * 6.05);
+        targets.push((0.5 - py / ch + jy) * 2.2);
+        targets.push(-0.28 + Math.random() * 0.28);
+        starts.push((Math.random() * 2 - 1) * 8.4);
+        starts.push((Math.random() * 2 - 1) * 5.0);
+        starts.push((Math.random() * 2 - 1) * 2.6);
+        seeds.push(Math.random());
+        sizes.push(0.55 + Math.random() * 0.95);
+      }
+      if (targets.length / 3 >= max) break;
+    }
+    if (!targets.length) return;
+
+    var prog = makeProgram(TITLE_VS, TITLE_FS);
+    title = {
+      program: prog,
+      n: targets.length / 3,
+      target: attrib(prog, 'aTarget', 3, new Float32Array(targets)),
+      start: attrib(prog, 'aStart', 3, new Float32Array(starts)),
+      seed: attrib(prog, 'aSeed', 1, new Float32Array(seeds)),
+      size: attrib(prog, 'aSize', 1, new Float32Array(sizes)),
+      u: {
+        time: uniform(prog, 'uTime'),
+        reveal: uniform(prog, 'uReveal'),
+        fade: uniform(prog, 'uFade'),
+        dpr: uniform(prog, 'uDpr'),
+        aspect: uniform(prog, 'uAspect')
+      }
+    };
+  }
+
+  var W = 1, H = 1, aspect = 1;
+  var pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  var state = {
+    p: 0, hero: 0, converge: 0,
+    reveal: 0, burst: 0, burstX: 0, burstY: 0,
+    fade: 1
+  };
+  var start = performance.now();
+  var last = 0;
+  var raf = null;
+  var lastY = -1;
+  var night = null;
+  var hero = null;
+  var offsets = { nightTop: 0, nightH: 1, heroH: 1 };
+  var readyWatch = null;
+
+  function resize() {
+    W = Math.max(1, window.innerWidth);
+    H = Math.max(1, window.innerHeight);
+    aspect = W / H;
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    offsets.nightTop = night ? night.offsetTop : 0;
+    offsets.nightH = night ? Math.max(1, night.offsetHeight) : 1;
+    offsets.heroH = hero ? Math.max(1, hero.offsetHeight) : H;
+    lastY = -1;
+  }
+
+  function progress() {
+    var y = window.scrollY || window.pageYOffset || 0;
+    if (y === lastY) return;
+    lastY = y;
+    var max = Math.max(1, document.documentElement.scrollHeight - H);
+    state.p = clamp(y / max);
+    state.hero = clamp(y / Math.max(1, offsets.heroH * 0.92));
+    if (night) {
+      var through = clamp((y + H * 0.5 - offsets.nightTop) / offsets.nightH);
+      state.converge = Math.sin(through * Math.PI) * 0.9;
+    }
+    state.fade = 1 - smoothstep(0.1, 0.72, state.hero);
+  }
+
+  function clamp(n) { return Math.max(0, Math.min(1, n)); }
+  function smoothstep(a, b, x) {
+    var t = clamp((x - a) / (b - a));
+    return t * t * (3 - 2 * t);
+  }
+
+  function paint(now) {
+    if (document.hidden) { raf = null; return; }
+    raf = requestAnimationFrame(paint);
+    if (MOBILE && now - last < 31 && !REDUCE) return;
+    last = now;
+    progress();
+
+    var t = (now - start) / 1000;
+    state.reveal += ((document.body.classList.contains('is-ready') ? 1 : 0) - state.reveal) * 0.045;
+    pointer.x += (pointer.tx - pointer.x) * 0.14;
+    pointer.y += (pointer.ty - pointer.y) * 0.14;
+    state.burst *= 0.94;
+
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.disable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+
+    if (hair) {
+      gl.useProgram(hair.program);
+      gl.uniform1f(hair.u.time, t);
+      gl.uniform1f(hair.u.scroll, state.p);
+      gl.uniform1f(hair.u.reveal, state.reveal);
+      gl.uniform1f(hair.u.converge, state.converge);
+      gl.uniform1f(hair.u.burst, state.burst);
+      gl.uniform1f(hair.u.attract, state.hero < 0.42 ? 0.72 : 0.24);
+      gl.uniform1f(hair.u.dpr, DPR);
+      gl.uniform1f(hair.u.aspect, aspect);
+      gl.uniform2f(hair.u.mouse, pointer.x, pointer.y);
+      gl.uniform2f(hair.u.burstPos, state.burstX, state.burstY);
+      gl.uniform1f(hair.u.glow, 1);
+      gl.drawArrays(gl.POINTS, 0, hair.n);
+      gl.uniform1f(hair.u.glow, 0);
+      gl.drawArrays(gl.POINTS, 0, hair.n);
+    }
+
+    if (title) {
+      gl.useProgram(title.program);
+      gl.uniform1f(title.u.time, t);
+      gl.uniform1f(title.u.reveal, state.reveal);
+      gl.uniform1f(title.u.fade, state.fade);
+      gl.uniform1f(title.u.dpr, DPR);
+      gl.uniform1f(title.u.aspect, aspect);
+      gl.drawArrays(gl.POINTS, 0, title.n);
+    }
+  }
+
+  function wake() {
+    if (REDUCE) {
+      progress();
+      state.reveal = 1;
+      paint(performance.now() + 1);
+      return;
+    }
+    if (raf === null) raf = requestAnimationFrame(paint);
+  }
+
+  function toWorld(x, y) {
+    var nx = (x / W) * 2 - 1;
+    var ny = 1 - (y / H) * 2;
+    return { x: nx * aspect * 3.6, y: ny * 2.5 };
+  }
+
+  function burstAt(x, y) {
+    var w = toWorld(x, y);
+    state.burstX = w.x;
+    state.burstY = w.y;
+    state.burst = 1;
+    if (REDUCE) return;
+    wake();
+  }
+
+  try {
+    buildAmbient();
+  } catch (err) {
+    console.warn('[wuyou:cosmos]', err);
+    root.classList.add('no-webgl');
+    canvas.classList.add('is-hidden');
+    return;
+  }
+
+  hero = document.querySelector('.hero');
+  night = document.getElementById('night');
+  resize();
+
+  if (!REDUCE) {
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { try { buildTitle(); } catch (err) { console.warn('[wuyou:title]', err); } });
+    } else {
+      setTimeout(function () { try { buildTitle(); } catch (err) {} }, 600);
+    }
+  }
+
+  window.addEventListener('resize', function () {
+    clearTimeout(resize._t);
+    resize._t = setTimeout(resize, 120);
+  }, { passive: true });
+
+  window.addEventListener('scroll', function () { lastY = -1; }, { passive: true });
+
+  document.addEventListener('pointermove', function (e) {
+    if (COARSE) return;
+    pointer.tx = (e.clientX / W) * 2 - 1;
+    pointer.ty = 1 - (e.clientY / H) * 2;
+  }, { passive: true });
+
+  document.addEventListener('pointerdown', function (e) {
+    if (e.button !== undefined && e.button !== 0) return;
+    burstAt(e.clientX, e.clientY);
+  }, { passive: true });
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) wake();
+  });
+
+  if (document.body.classList.contains('is-ready')) state.reveal = 1;
+  readyWatch = new MutationObserver(function () {
+    if (document.body.classList.contains('is-ready')) {
+      state.reveal = Math.max(state.reveal, 0.001);
+      if (readyWatch) { readyWatch.disconnect(); readyWatch = null; }
+    }
+  });
+  readyWatch.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  window.WUYOU_CINEMA = {
+    burstAt: burstAt,
+    wake: wake,
+    get state() { return state; }
+  };
+
+  if (REDUCE) {
+    state.reveal = 1;
+    progress();
+    paint(performance.now() + 1);
+  } else {
+    wake();
+  }
+})();
+</script>
+  <script>
+/* ============================================================
    無有 · 归无与伽塔
    All interactions, no dependencies.
    ============================================================ */
@@ -4327,6 +5194,7 @@ window.WUYOU = {
   function initScroll() {
     var sections = $('[data-section]');
     var navLinks = $('[data-nav]');
+    var chapters = $('[data-chapter]');
     var ticking = false;
 
     function update() {
@@ -4335,8 +5203,11 @@ window.WUYOU = {
       if (els.scrollBar) els.scrollBar.style.transform = 'scaleX(' + (max > 0 ? clamp(0, 1, y / max) : 0) + ')';
       if (els.siteNav) els.siteNav.classList.toggle('is-solid', y > 26);
       if (els.dock) els.dock.classList.toggle('is-show', y > window.innerHeight * 0.55);
+      document.documentElement.style.setProperty('--scroll', (max > 0 ? clamp(0, 1, y / max) : 0).toFixed(4));
+      var heroH = (document.querySelector('.hero') || {}).offsetHeight || window.innerHeight;
+      document.documentElement.style.setProperty('--hero', clamp(0, 1, y / Math.max(1, heroH)).toFixed(4));
 
-      var active = '';
+      var active = y < window.innerHeight * 0.62 ? 'top' : '';
       sections.forEach(function (section) {
         var r = section.getBoundingClientRect();
         if (r.top <= window.innerHeight * 0.38 && r.bottom > window.innerHeight * 0.12) active = section.getAttribute('data-section');
@@ -4346,6 +5217,9 @@ window.WUYOU = {
         link.classList.toggle('is-active', on);
         if (on) link.setAttribute('aria-current', 'page');
         else link.removeAttribute('aria-current');
+      });
+      chapters.forEach(function (link) {
+        link.classList.toggle('is-active', link.getAttribute('data-chapter') === active);
       });
       ticking = false;
     }
@@ -4383,9 +5257,8 @@ window.WUYOU = {
   function initHero() {
     var hero = $('.hero');
     var canvas = byId('stars');
-    if (!hero || !canvas) return;
-    var ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!hero) return;
+    var ctx = canvas ? canvas.getContext('2d') : null;
     var dpr = Math.min(2, window.devicePixelRatio || 1);
     var W = 0, H = 0, stars = [], shots = [], lastShot = 0, raf = null, visible = true;
 
@@ -4409,11 +5282,13 @@ window.WUYOU = {
       var rect = hero.getBoundingClientRect();
       W = Math.max(1, rect.width);
       H = Math.max(1, rect.height);
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (canvas) {
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+      }
+      if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       makeStars();
-      if (REDUCE) draw(performance.now());
+      if (ctx && REDUCE) draw(performance.now());
     }
 
     function spawn(now) {
@@ -4429,7 +5304,7 @@ window.WUYOU = {
     }
 
     function draw(now) {
-      if (!W || !H) return;
+      if (!ctx || !W || !H) return;
       ctx.clearRect(0, 0, W, H);
       for (var i = 0; i < stars.length; i++) {
         var s = stars[i];
@@ -4473,6 +5348,7 @@ window.WUYOU = {
     }
 
     function start() {
+      if (!ctx) return;
       if (REDUCE) { draw(performance.now()); return; }
       if (raf === null && visible && !document.hidden) raf = requestAnimationFrame(frame);
     }
@@ -5529,11 +6405,19 @@ window.WUYOU = {
         label: '删除',
         danger: true
       }, async function () {
-        await photoStore.remove(photo.id);
+        var index = photos.findIndex(function (p) { return p.id === photo.id; });
         photos = photos.filter(function (p) { return p.id !== photo.id; });
         if (els.lightbox && els.lightbox.open) els.lightbox.close();
         renderPhotos();
-        toast('这段回忆已移除');
+        try {
+          await photoStore.remove(photo.id);
+          toast('这段回忆已移除');
+        } catch (err) {
+          console.warn('[wuyou] delete photo', err);
+          if (index >= 0) photos.splice(index, 0, photo);
+          renderPhotos();
+          toast('删除失败，请稍后再试', true);
+        }
       });
     }
 
@@ -5718,17 +6602,21 @@ window.WUYOU = {
       var photo = photos.find(function (p) { return p.id === id; });
       if (!photo) { if (els.captionModal) els.captionModal.close(); return; }
       var value = (els.captionInput && els.captionInput.value || '').trim().slice(0, 60);
+      var previous = photo.caption;
       photo.caption = value;
+      renderPhotos();
+      if (els.lightbox && els.lightbox.open) renderLightbox();
+      if (els.captionModal) els.captionModal.close();
       try {
         await photoStore.updateCaption(photo.id, value);
-        renderPhotos();
-        if (els.lightbox && els.lightbox.open) renderLightbox();
         toast(value ? '这句话已经写进照片背面' : '说明已清空');
       } catch (err) {
         console.warn('[wuyou] caption', err);
+        photo.caption = previous;
+        renderPhotos();
+        if (els.lightbox && els.lightbox.open) renderLightbox();
         toast('说明保存失败', true);
       }
-      if (els.captionModal) els.captionModal.close();
     });
 
     els.backupBtn && els.backupBtn.addEventListener('click', backupArchive);
