@@ -49,7 +49,7 @@ dist/og.jpg
 https://wuyou-album.netlify.app/.netlify/functions/album
 ```
 
-浏览公开；上传、改说明、删除需要 `X-Album-Key`。最多 200 张，单张原图 4MB 内，浏览器会先压缩到 1600px / JPEG 0.84。照片会同步给所有打开网站的人，请只上传愿意共享的内容。
+浏览公开；上传、改说明、删除需要 `X-Album-Key`。最多 200 张，单张原图 8MB 内，浏览器会先压缩到 1600px / JPEG 0.84。照片会同步给所有打开网站的人，请只上传愿意共享的内容。
 
 约定清单也走同一个 Function，`GET ?wishes=1` 读取、`POST {action:"wish"}` 新增，双方都可以在页面里添加；最多 100 条。
 
