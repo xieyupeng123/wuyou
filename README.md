@@ -57,10 +57,10 @@ https://wuyou-album.netlify.app/.netlify/functions/album
 
 ## 音乐
 
-《Aria da Capo è Fine》— Kimiko Ishizaka，**CC0 1.0**，来源 Free Music Archive。  
-文件：`public/audio/da-capo.mp3`。不会自动播放，需点击右上角“声音”。
+《Da Capo (Instrumental)》— HOYO-MiX。  
+文件：`public/audio/da-capo.mp3`（4,570,219 bytes），由项目所有者提供。不会自动播放，需点击右上角“声音”。
 
-这不是《崩坏3》毕业旅行的同名曲。后者是 HOYO-MiX 的版权作品，没有可合法直接分发的免费音源；页面里放了 [官方页面](https://hoyomix.amarea.cn/album/153051033) 入口。若你拥有购买的文件，可用它替换 `public/audio/da-capo.mp3` 后重新构建。
+这是《崩坏3》毕业旅行的《Da Capo》纯音乐版本。它不是 CC0 素材；公开传播前，请确认你拥有相应的使用授权。官方页面：[HOYO-MiX](https://hoyomix.amarea.cn/album/153051033)。
 
 ## 目录
 
