@@ -75,8 +75,9 @@ zhiyou/
 │  ├─ config.js          文案、时间、聊天、摘录、约定、相册配置
 │  ├─ app.js             交互与数据
 │  ├─ cosmos.js          WebGL 星尘 / 粒子聚字
+│  ├─ moon.js            实时 WebGL 月球（光线追踪球体）
 │  ├─ styles.css         视觉系统
-│  ├─ moon.svg           三维感月球
+│  ├─ moon.svg           无 WebGL 时的月球回退
 │  ├─ favicon.svg
 │  ├─ og.jpg             1200×630 分享图
 │  └─ fonts/             已子集化的字体
