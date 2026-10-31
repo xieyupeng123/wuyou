@@ -36,6 +36,7 @@ GitHub Pages 从仓库 `xieyupeng123/wuyou` 的 `main` 分支根目录发布。
 ```text
 dist/index.html
 dist/audio/da-capo.mp3
+dist/audio/shi-luo-ye-ying.mp3
 dist/og.jpg
 ```
 
@@ -57,10 +58,14 @@ https://wuyou-album.netlify.app/.netlify/functions/album
 
 ## 音乐
 
-《Da Capo (Instrumental)》— HOYO-MiX。  
-文件：`public/audio/da-capo.mp3`（4,570,219 bytes），由项目所有者提供。不会自动播放，需点击右上角“声音”。
+右上角「声音」面板里可以在两首背景音乐之间切换，选择会记在 `localStorage` 的 `wuyou.v4.track`，刷新后保持。都不会自动播放。
 
-这是《崩坏3》毕业旅行的《Da Capo》纯音乐版本。它不是 CC0 素材；公开传播前，请确认你拥有相应的使用授权。官方页面：[HOYO-MiX](https://hoyomix.amarea.cn/album/153051033)。
+| 编号 | 曲目 | 文件 | 来源 |
+| --- | --- | --- | --- |
+| 01 | Da Capo (Instrumental) — HOYO-MiX | `public/audio/da-capo.mp3`（4,570,219 bytes） | 项目所有者提供，《崩坏3》毕业旅行版；非 CC0 |
+| 02 | 时落叶影 | `public/audio/shi-luo-ye-ying.mp3`（3,263,051 bytes） | 项目所有者提供；非 CC0 |
+
+新增第三首只需在 `src/audio/AudioManager.js` 的 `tracks` 里加一项，并在 `index.html` 的 `.sound-panel__tracks` 里加一个 `[data-track]` 按钮。两首曲目公开传播前，请确认你拥有相应的使用授权。官方页面：[HOYO-MiX](https://hoyomix.amarea.cn/album/153051033)。
 
 ## 目录
 
@@ -72,11 +77,12 @@ v4/
     config.js
     core/        Quality / Scroll / Camera / Scene
     world/       Moon / ParticleField / Environment / Streams
-    ui/          Interface / Story
+    ui/          Interface / Story / Presence
     audio/       AudioManager
     styles.css
   public/
     audio/da-capo.mp3
+    audio/shi-luo-ye-ying.mp3
     og.jpg
   tools?        无
 ```
