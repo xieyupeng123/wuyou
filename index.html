@@ -3426,6 +3426,127 @@ body.has-cursor:not(:hover) .cursor-ring { opacity: 0; }
   .whispers__foot { text-align: left; }
 }
 
+/* ── sound panel ───────────────────────────────────────── */
+.sound-panel {
+  position: fixed;
+  top: 88px;
+  right: var(--pad);
+  z-index: 72;
+  width: min(322px, calc(100vw - var(--pad) * 2));
+  padding: 16px 16px 13px;
+  border: 1px solid rgba(230, 197, 140, 0.18);
+  border-radius: 16px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018) 38%, rgba(6, 9, 16, 0.72)),
+    rgba(8, 12, 20, 0.82);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.52),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(22px) saturate(138%);
+  -webkit-backdrop-filter: blur(22px) saturate(138%);
+  opacity: 0;
+  transform: translate3d(0, -8px, 0) scale(0.985);
+  transform-origin: 100% 0;
+  transition: opacity 0.35s var(--ease), transform 0.45s var(--ease);
+}
+.sound-panel.is-open { opacity: 1; transform: none; }
+.sound-panel__head { display: flex; align-items: flex-start; gap: 10px; }
+.sound-panel__head strong {
+  display: block;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.sound-panel__head small {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-faint);
+  font-family: var(--sans);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+}
+.sound-panel__signal {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 18px;
+  height: 16px;
+  margin-top: 2px;
+  flex: 0 0 18px;
+}
+.sound-panel__signal i {
+  display: block;
+  width: 2px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--gold);
+  opacity: 0.45;
+}
+.sound-panel.is-live .sound-panel__signal i { animation: signal 1.15s ease-in-out infinite alternate; opacity: 0.9; }
+.sound-panel.is-live .sound-panel__signal i:nth-child(2) { animation-delay: 0.18s; height: 9px; }
+.sound-panel.is-live .sound-panel__signal i:nth-child(3) { animation-delay: 0.34s; height: 13px; }
+@keyframes signal {
+  from { transform: scaleY(0.55); opacity: 0.5; }
+  to { transform: scaleY(1.25); opacity: 1; }
+}
+.sound-panel__close {
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-faint);
+  font-size: 18px;
+  line-height: 1;
+  transition: color 0.3s, background 0.3s;
+}
+.sound-panel__close:hover { color: var(--ink); background: rgba(255, 255, 255, 0.06); }
+.sound-panel__volume {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.sound-panel__volume span {
+  color: var(--ink-faint);
+  font-family: var(--sans);
+  font-size: 7px;
+  letter-spacing: 0.2em;
+}
+.sound-panel__volume input {
+  flex: 1;
+  min-width: 0;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+.sound-panel__volume b {
+  min-width: 22px;
+  color: var(--gold-bright);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+.sound-panel__note {
+  margin: 9px 0 0;
+  color: var(--ink-faint);
+  font-family: var(--sans);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+@media (max-width: 760px) {
+  .sound-panel { top: 74px; right: 16px; width: calc(100vw - 32px); }
+}
+
 /* ============================================================
    V3 · CINEMA — one continuous night
    ============================================================ */
@@ -3834,6 +3955,23 @@ body.is-ready .hero__title {
       </button>
     </div>
   </header>
+
+  <aside class="sound-panel" id="soundPanel" aria-label="声音控制" hidden>
+    <div class="sound-panel__head">
+      <span class="sound-panel__signal" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div>
+        <strong>星尘环境音</strong>
+        <small>浏览器实时合成 · 不会自动播放</small>
+      </div>
+      <button class="sound-panel__close" id="soundPanelClose" type="button" aria-label="收起声音控制">×</button>
+    </div>
+    <label class="sound-panel__volume">
+      <span>VOLUME</span>
+      <input id="volumeRange" type="range" min="0" max="100" step="1" value="55" aria-label="环境音音量">
+      <b id="volumeValue">55</b>
+    </label>
+    <p class="sound-panel__note">很轻的一层风与钟声。夜里听，刚好。</p>
+  </aside>
 
   <main>
     <!-- ─────────────────────────── HERO ─────────────────────────── -->
@@ -5094,6 +5232,10 @@ window.WUYOU = {
     els.skipChat = byId('skipChat');
     els.seal = byId('seal');
     els.soundBtn = byId('soundBtn');
+    els.soundPanel = byId('soundPanel');
+    els.soundPanelClose = byId('soundPanelClose');
+    els.volumeRange = byId('volumeRange');
+    els.volumeValue = byId('volumeValue');
     els.shareBtn = byId('shareBtn');
     els.footerShare = byId('footerShare');
     els.shareModal = byId('shareModal');
@@ -5690,6 +5832,44 @@ window.WUYOU = {
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) { btn.hidden = true; return; }
     var ctx = null, master = null, chimeTimer = 0, suspendTimer = 0, on = false;
+    var panel = els.soundPanel, label = btn.querySelector('.nav-btn__label');
+    var savedVolume = parseFloat(localStorage.getItem('wuyou.volume.v1'));
+    var volume = isNaN(savedVolume) ? 0.55 : clamp(0, 1, savedVolume);
+
+    function setVolume(next) {
+      volume = clamp(0, 1, next);
+      if (els.volumeRange) els.volumeRange.value = Math.round(volume * 100);
+      if (els.volumeValue) els.volumeValue.textContent = String(Math.round(volume * 100));
+      localStorage.setItem('wuyou.volume.v1', volume.toFixed(2));
+      if (master && on && ctx) {
+        var now = ctx.currentTime;
+        master.gain.cancelScheduledValues(now);
+        master.gain.setTargetAtTime(0.09 * volume, now, 0.18);
+      }
+    }
+
+    function openPanel() {
+      if (!panel) return;
+      panel.hidden = false;
+      requestAnimationFrame(function () { panel.classList.add('is-open'); });
+      btn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closePanel() {
+      if (!panel) return;
+      panel.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      setTimeout(function () {
+        if (!panel.classList.contains('is-open')) panel.hidden = true;
+      }, 420);
+    }
+
+    if (els.volumeRange) {
+      els.volumeRange.value = String(Math.round(volume * 100));
+      els.volumeRange.addEventListener('input', function () { setVolume(Number(els.volumeRange.value) / 100); });
+    }
+    if (els.volumeValue) els.volumeValue.textContent = String(Math.round(volume * 100));
+    if (els.soundPanelClose) els.soundPanelClose.addEventListener('click', closePanel);
 
     function build() {
       ctx = new AC();
@@ -5770,10 +5950,12 @@ window.WUYOU = {
       on = !on;
       var now = ctx.currentTime;
       master.gain.cancelScheduledValues(now);
-      master.gain.setTargetAtTime(on ? 0.055 : 0, now, 0.28);
+      master.gain.setTargetAtTime(on ? 0.09 * volume : 0, now, 0.28);
       btn.classList.toggle('is-playing', on);
       btn.setAttribute('aria-pressed', String(on));
       btn.setAttribute('aria-label', on ? '关闭环境音' : '开启环境音');
+      if (panel) panel.classList.toggle('is-live', on);
+      if (label) label.textContent = on ? '静音' : '声音';
       toast(on ? '环境音已开启 · 很轻，像凌晨的风' : '环境音已关闭');
       if (!on) {
         suspendTimer = setTimeout(function () {
@@ -5782,7 +5964,18 @@ window.WUYOU = {
       }
     }
 
-    btn.addEventListener('click', function () { toggle().catch(function () { toast('声音播放失败', true); }); });
+    btn.addEventListener('click', function () {
+      openPanel();
+      toggle().catch(function () { toast('声音播放失败', true); });
+    });
+    document.addEventListener('click', function (e) {
+      if (!panel || panel.hidden) return;
+      if (e.target.closest('#soundBtn, #soundPanel')) return;
+      closePanel();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && panel && !panel.hidden) closePanel();
+    });
   }
 
   /* ── tilt ───────────────────────────────────────────────── */
