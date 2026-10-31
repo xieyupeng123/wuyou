@@ -3804,6 +3804,9 @@ body.is-ready .hero__title {
     linear-gradient(180deg, rgba(4, 6, 11, 0.48) 0%, rgba(4, 6, 11, 0.14) 38%, rgba(4, 6, 10, 0.20) 62%, rgba(5, 7, 12, 0.76) 100%);
 }
 .night__moon-wrap { animation: moonFloat 14s ease-in-out infinite alternate; }
+.night__moon--webgl { display: none; opacity: 0; }
+body.has-moon-webgl .night__moon--webgl { display: block; opacity: 1; }
+body.has-moon-webgl svg.night__moon { display: none; }
 @keyframes moonFloat {
   from { transform: translate3d(0, 8px, 0) rotate(-0.35deg); }
   to { transform: translate3d(0, -10px, 0) rotate(0.35deg); }
@@ -4104,6 +4107,7 @@ body.is-ready .hero__title {
             <circle cx="300" cy="300" r="300" fill="url(#moonShade)"/>
             <circle cx="300" cy="300" r="299" fill="none" stroke="#f3efe6" stroke-opacity=".22"/>
           </svg>
+          <canvas class="night__moon night__moon--webgl" id="moonCanvas" aria-hidden="true"></canvas>
           <span class="night__orbit"></span>
           <span class="night__moon-label">LUNA / 03:40</span>
         </div>
@@ -5137,6 +5141,195 @@ window.WUYOU = {
   } else {
     wake();
   }
+})();
+</script>
+  <script>
+/* 無有 · real-time moon
+   A small raymarched sphere. No libraries, no textures. */
+(function () {
+  var canvas = document.getElementById('moonCanvas');
+  if (!canvas) return;
+  var gl = canvas.getContext('webgl', {
+    alpha: true,
+    antialias: true,
+    premultipliedAlpha: false,
+    powerPreference: 'low-power'
+  });
+  if (!gl) return;
+
+  var VS = [
+    'attribute vec2 aPos;',
+    'varying vec2 vUv;',
+    'void main() {',
+    '  vUv = aPos * 0.5 + 0.5;',
+    '  gl_Position = vec4(aPos, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  var FS = [
+    'precision highp float;',
+    'uniform vec2 uRes;',
+    'uniform float uTime;',
+    'varying vec2 vUv;',
+    'float hash(vec3 p) {',
+    '  p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));',
+    '  p *= 17.0;',
+    '  return fract(p.x * p.y * p.z * (p.x + p.y + p.z));',
+    '}',
+    'float noise(vec3 x) {',
+    '  vec3 i = floor(x);',
+    '  vec3 f = fract(x);',
+    '  f = f * f * (3.0 - 2.0 * f);',
+    '  return mix(mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), f.x),',
+    '                 mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),',
+    '             mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),',
+    '                 mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);',
+    '}',
+    'float fbm(vec3 p) {',
+    '  float a = 0.5;',
+    '  float s = 0.0;',
+    '  for (int i = 0; i < 5; i++) {',
+    '    s += a * noise(p);',
+    '    p = p * 2.03 + vec3(1.7, 9.2, 3.4);',
+    '    a *= 0.5;',
+    '  }',
+    '  return s;',
+    '}',
+    'mat3 rotY(float a) {',
+    '  float c = cos(a), s = sin(a);',
+    '  return mat3(c, 0.0, -s, 0.0, 1.0, 0.0, s, 0.0, c);',
+    '}',
+    'void main() {',
+    '  vec2 uv = vUv * 2.0 - 1.0;',
+    '  uv.x *= uRes.x / uRes.y;',
+    '  vec3 ro = vec3(0.0, 0.0, 3.35);',
+    '  vec3 rd = normalize(vec3(uv, -2.0));',
+    '  float b = dot(ro, rd);',
+    '  float c = dot(ro, ro) - 1.0;',
+    '  float h = b * b - c;',
+    '  if (h < 0.0) { gl_FragColor = vec4(0.0); return; }',
+    '  float t = -b - sqrt(h);',
+    '  vec3 p = ro + rd * t;',
+    '  vec3 n = normalize(p);',
+    '  vec3 q = rotY(uTime * 0.035) * n;',
+    '  float maria = fbm(q * 2.35);',
+    '  float fine = fbm(q * 11.0);',
+    '  float grain = fbm(q * 27.0);',
+    '  vec3 base = mix(vec3(0.74, 0.72, 0.67), vec3(0.34, 0.35, 0.38), smoothstep(0.38, 0.68, maria) * 0.74);',
+    '  base *= 0.78 + fine * 0.34;',
+    '  base -= smoothstep(0.64, 0.78, grain) * 0.13;',
+    '  base -= smoothstep(0.70, 0.78, fbm(q * 7.0 + vec3(4.0))) * 0.14;',
+    '  vec3 L = normalize(vec3(-0.58, 0.34, 0.74));',
+    '  float ndl = dot(n, L);',
+    '  float lit = max(ndl, 0.0);',
+    '  vec3 col = base * (0.045 + 0.955 * lit);',
+    '  col += vec3(1.0, 0.82, 0.58) * pow(lit, 18.0) * 0.16;',
+    '  float rim = pow(1.0 - max(dot(n, -rd), 0.0), 3.0);',
+    '  col += vec3(0.55, 0.68, 0.95) * rim * 0.15;',
+    '  col = mix(col, col * vec3(0.70, 0.77, 0.96), smoothstep(0.15, -0.30, ndl) * 0.45);',
+    '  float alpha = smoothstep(0.0, 0.007, h);',
+    '  gl_FragColor = vec4(col, alpha);',
+    '}'
+  ].join('\n');
+
+  function shader(type, source) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, source);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      throw new Error(gl.getShaderInfoLog(s) || 'moon shader');
+    }
+    return s;
+  }
+
+  var program;
+  try {
+    program = gl.createProgram();
+    gl.attachShader(program, shader(gl.VERTEX_SHADER, VS));
+    gl.attachShader(program, shader(gl.FRAGMENT_SHADER, FS));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error('moon link');
+  } catch (err) {
+    console.warn('[wuyou:moon]', err);
+    return;
+  }
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(program, 'aPos');
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  var uRes = gl.getUniformLocation(program, 'uRes');
+  var uTime = gl.getUniformLocation(program, 'uTime');
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  var active = false;
+  var raf = 0;
+  var last = 0;
+  var started = performance.now();
+
+  function resize() {
+    var w = Math.max(1, Math.round(canvas.clientWidth * dpr));
+    var h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    }
+  }
+
+  function draw(now) {
+    resize();
+    gl.useProgram(program);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform1f(uTime, reduce ? 1.2 : (now - started) / 1000);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  function loop(now) {
+    raf = 0;
+    if (!active || document.hidden) return;
+    if (now - last < 33) { raf = requestAnimationFrame(loop); return; }
+    last = now;
+    draw(now);
+    if (reduce) return;
+    raf = requestAnimationFrame(loop);
+  }
+
+  function start() {
+    if (reduce) { draw(performance.now()); return; }
+    if (!raf) raf = requestAnimationFrame(loop);
+  }
+
+  function stop() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+
+  document.body.classList.add('has-moon-webgl');
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      active = entries.some(function (e) { return e.isIntersecting; });
+      if (active) start(); else stop();
+    }, { threshold: 0.01 }).observe(canvas);
+  } else {
+    active = true;
+    start();
+  }
+
+  window.addEventListener('resize', function () {
+    if (reduce) draw(performance.now());
+  }, { passive: true });
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stop(); else if (active) start();
+  });
 })();
 </script>
   <script>
