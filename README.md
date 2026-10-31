@@ -62,6 +62,10 @@ node tools/build.mjs
 - 不联网或相册服务不可用时，页面会自动退回本机 IndexedDB 存储。
 - 共享相册函数在 `D:\无定义\browser\netlify-album`，部署到 Netlify 站点 `wuyou-album`。
 
+## 声音
+
+右上角「声音」会启动一段浏览器实时合成的星尘环境音，不会自动播放；旁边的小面板可以调音量，音量会记在这台设备上。当前没有内置《Da Capo》音频文件——在拿到合法音频之前，页面不会用别的音乐冒充。把 `da-capo.mp3` 放进 `assets/audio/` 后，可以在此基础上接入正式曲目。
+
 ## 文件结构
 
 ```text
