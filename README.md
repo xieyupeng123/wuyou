@@ -7,7 +7,7 @@
 ## V4 是什么
 
 - 六幕滚动叙事：虚无 → 月面 → 记忆 → 相册 → 约定 → 未来。
-- Three.js / WebGL 实时三维月球、GPU 粒子星尘、双色粒子流、镜头导演与滚动时间轴。
+- Three.js / WebGL 实时三维月球、GPU 粒子星尘、三色粒子流、镜头导演与滚动时间轴。
 - 精确到秒的相伴计时；聊天逐条重放；关系确认书与印章；共享相册；三条约定；时间胶囊；分享。
 - 液态玻璃 UI；移动端降级；`prefers-reduced-motion`；WebGL 不可用时自动切换轻量模式。
 - 单文件构建：`dist/index.html` 内联 CSS、JS 与字体；音频与分享图作为静态文件同目录部署。
@@ -49,7 +49,9 @@ dist/og.jpg
 https://wuyou-album.netlify.app/.netlify/functions/album
 ```
 
-浏览公开；上传、改说明、删除需要 `X-Album-Key`。最多 30 张，单张原图 4MB 内，浏览器会先压缩到 1600px / JPEG 0.84。照片会同步给所有打开网站的人，请只上传愿意共享的内容。
+浏览公开；上传、改说明、删除需要 `X-Album-Key`。最多 200 张，单张原图 4MB 内，浏览器会先压缩到 1600px / JPEG 0.84。照片会同步给所有打开网站的人，请只上传愿意共享的内容。
+
+约定清单也走同一个 Function，`GET ?wishes=1` 读取、`POST {action:"wish"}` 新增，双方都可以在页面里添加；最多 100 条。
 
 留言与印章只保存在当前浏览器；相册支持导出 / 恢复 JSON 备份。
 
@@ -57,6 +59,8 @@ https://wuyou-album.netlify.app/.netlify/functions/album
 
 《Aria da Capo è Fine》— Kimiko Ishizaka，**CC0 1.0**，来源 Free Music Archive。  
 文件：`public/audio/da-capo.mp3`。不会自动播放，需点击右上角“声音”。
+
+这不是《崩坏3》毕业旅行的同名曲。后者是 HOYO-MiX 的版权作品，没有可合法直接分发的免费音源；页面里放了 [官方页面](https://hoyomix.amarea.cn/album/153051033) 入口。若你拥有购买的文件，可用它替换 `public/audio/da-capo.mp3` 后重新构建。
 
 ## 目录
 
