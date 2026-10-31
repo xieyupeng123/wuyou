@@ -5008,6 +5008,7 @@ window.WUYOU = {
     if (MOBILE && now - last < 31 && !REDUCE) return;
     last = now;
     progress();
+    if (window.WUYOU_MOON && window.WUYOU_MOON.render) window.WUYOU_MOON.render(now);
 
     var t = (now - start) / 1000;
     state.reveal += ((document.body.classList.contains('is-ready') ? 1 : 0) - state.reveal) * 0.045;
@@ -5268,6 +5269,7 @@ window.WUYOU = {
   var active = false;
   var raf = 0;
   var last = 0;
+  var reducedDrawn = false;
   var started = performance.now();
 
   function resize() {
@@ -5292,44 +5294,58 @@ window.WUYOU = {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
-  function loop(now) {
-    raf = 0;
+  function render(now) {
     if (!active || document.hidden) return;
-    if (now - last < 33) { raf = requestAnimationFrame(loop); return; }
+    if (reduce) {
+      if (reducedDrawn) return;
+      reducedDrawn = true;
+      draw(now);
+      return;
+    }
+    if (now - last < 33) return;
     last = now;
     draw(now);
-    if (reduce) return;
-    raf = requestAnimationFrame(loop);
   }
 
-  function start() {
-    if (reduce) { draw(performance.now()); return; }
-    if (!raf) raf = requestAnimationFrame(loop);
+  function fallback(now) {
+    raf = 0;
+    if (!active) return;
+    render(now);
+    if (!reduce) raf = requestAnimationFrame(fallback);
   }
 
-  function stop() {
+  function wakeFallback() {
+    if (window.WUYOU_CINEMA || raf) return;
+    raf = requestAnimationFrame(fallback);
+  }
+
+  function sleepFallback() {
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
   }
 
   document.body.classList.add('has-moon-webgl');
+  window.WUYOU_MOON = { render: render };
 
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
       active = entries.some(function (e) { return e.isIntersecting; });
-      if (active) start(); else stop();
+      if (active) {
+        if (reduce) { reducedDrawn = false; render(performance.now()); }
+        wakeFallback();
+      } else {
+        sleepFallback();
+      }
     }, { threshold: 0.01 }).observe(canvas);
   } else {
     active = true;
-    start();
+    wakeFallback();
   }
 
   window.addEventListener('resize', function () {
-    if (reduce) draw(performance.now());
+    reducedDrawn = false;
+    if (reduce) render(performance.now());
   }, { passive: true });
-  document.addEventListener('visibilitychange', function () {
-    if (document.hidden) stop(); else if (active) start();
-  });
 })();
 </script>
   <script>
