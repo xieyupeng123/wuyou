@@ -58,7 +58,7 @@ https://wuyou-album.netlify.app/.netlify/functions/album
 
 ## 自动备份到 GitHub
 
-`.github/workflows/backup.yml` 每 30 分钟从站点同步一次：
+`.github/workflows/backup.yml` 约每 5 分钟从站点同步一次（GitHub 定时任务可能有延迟）：
 
 - `backup/album/`：共享相册原图
 - `backup/album.json`：照片信息
