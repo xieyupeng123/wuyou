@@ -41,22 +41,21 @@ for (const name of await fs.readdir(albumDir)) {
   }
 }
 
-const stamp = new Date().toISOString();
 await fs.writeFile(
   path.join(root, "album.json"),
-  JSON.stringify({ syncedAt: stamp, photos }, null, 2)
+  JSON.stringify({ photos }, null, 2)
 );
 await fs.writeFile(
   path.join(root, "wishes.json"),
-  JSON.stringify({ syncedAt: stamp, wishes: wishes.wishes || [] }, null, 2)
+  JSON.stringify({ wishes: wishes.wishes || [] }, null, 2)
 );
 await fs.writeFile(
   path.join(root, "notes.json"),
-  JSON.stringify({ syncedAt: stamp, notes: notes.notes || [] }, null, 2)
+  JSON.stringify({ notes: notes.notes || [] }, null, 2)
 );
 await fs.writeFile(
   path.join(root, "README.md"),
-  `# 無有 · 自动备份\n\n最后同步：${stamp}\n\n- \`album/\`：共享相册原图\n- \`album.json\`：照片信息\n- \`wishes.json\`：想一起做的事\n- \`notes.json\`：写给未来的话\n\n由 GitHub Actions 每 30 分钟从站点同步。\n`
+  `# 無有 · 自动备份\n\n- \`album/\`：共享相册原图\n- \`album.json\`：照片信息\n- \`wishes.json\`：想一起做的事\n- \`notes.json\`：写给未来的话\n\n由 GitHub Actions 每 30 分钟从站点同步；内容没有变化时不会产生提交。\n`
 );
 
 console.log(`backup: ${photos.length} photos, ${(wishes.wishes || []).length} wishes, ${(notes.notes || []).length} notes`);
