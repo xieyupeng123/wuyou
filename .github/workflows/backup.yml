@@ -1,0 +1,35 @@
+name: backup-content
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: content-backup
+  cancel-in-progress: true
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Sync shared content
+        run: node scripts/backup.mjs
+      - name: Commit changes
+        run: |
+          git config user.name "wuyou-backup"
+          git config user.email "backup@users.noreply.github.com"
+          git add backup
+          if git diff --cached --quiet; then
+            echo "No content changes."
+          else
+            git commit -m "Auto backup shared memories"
+            git push
+          fi
