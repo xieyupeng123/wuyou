@@ -1,0 +1,105 @@
+{
+  "syncedAt": "2026-11-01T09:45:57.706Z",
+  "photos": [
+    {
+      "id": "e6589960-b3b8-46bf-aaa2-875c1e644cbe",
+      "path": "photos/e6589960-b3b8-46bf-aaa2-875c1e644cbe.jpg",
+      "caption": "",
+      "width": 240,
+      "height": 240,
+      "uploader": "shared",
+      "createdAt": 1793470194542,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=e6589960-b3b8-46bf-aaa2-875c1e644cbe"
+    },
+    {
+      "id": "9bbf291f-beb7-4c53-8533-639ac338984d",
+      "path": "photos/9bbf291f-beb7-4c53-8533-639ac338984d.jpg",
+      "caption": "",
+      "width": 720,
+      "height": 1600,
+      "uploader": "shared",
+      "createdAt": 1793470997632,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=9bbf291f-beb7-4c53-8533-639ac338984d"
+    },
+    {
+      "id": "d147fde6-42c5-4e94-b788-7e4b2db2dc15",
+      "path": "photos/d147fde6-42c5-4e94-b788-7e4b2db2dc15.jpg",
+      "caption": "",
+      "width": 1500,
+      "height": 477,
+      "uploader": "shared",
+      "createdAt": 1793471063699,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=d147fde6-42c5-4e94-b788-7e4b2db2dc15"
+    },
+    {
+      "id": "a6f8dd53-0af0-4985-ae6a-295ee882dbd8",
+      "path": "photos/a6f8dd53-0af0-4985-ae6a-295ee882dbd8.jpg",
+      "caption": "",
+      "width": 944,
+      "height": 1600,
+      "uploader": "shared",
+      "createdAt": 1793472031207,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=a6f8dd53-0af0-4985-ae6a-295ee882dbd8"
+    },
+    {
+      "id": "163ef5db-e4c8-4644-a0e1-28b4651baafd",
+      "path": "photos/163ef5db-e4c8-4644-a0e1-28b4651baafd.jpg",
+      "caption": "",
+      "width": 1600,
+      "height": 720,
+      "uploader": "shared",
+      "createdAt": 1793472331225,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=163ef5db-e4c8-4644-a0e1-28b4651baafd"
+    },
+    {
+      "id": "6ae17b7c-c712-4089-9730-af552811e9ac",
+      "path": "photos/6ae17b7c-c712-4089-9730-af552811e9ac.jpg",
+      "caption": "",
+      "width": 1600,
+      "height": 720,
+      "uploader": "shared",
+      "createdAt": 1793472332234,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=6ae17b7c-c712-4089-9730-af552811e9ac"
+    },
+    {
+      "id": "0ff3cdb7-8d43-4a1f-b5a3-10517df39c54",
+      "path": "photos/0ff3cdb7-8d43-4a1f-b5a3-10517df39c54.jpg",
+      "caption": "",
+      "width": 1600,
+      "height": 720,
+      "uploader": "shared",
+      "createdAt": 1793472333017,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=0ff3cdb7-8d43-4a1f-b5a3-10517df39c54"
+    },
+    {
+      "id": "7c674b2d-6bb9-4a11-b8fa-19602e7b3a23",
+      "path": "photos/7c674b2d-6bb9-4a11-b8fa-19602e7b3a23.jpg",
+      "caption": "",
+      "width": 1600,
+      "height": 720,
+      "uploader": "shared",
+      "createdAt": 1793472334035,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=7c674b2d-6bb9-4a11-b8fa-19602e7b3a23"
+    },
+    {
+      "id": "738be8f9-3900-454a-a137-b5a2518a2464",
+      "path": "photos/738be8f9-3900-454a-a137-b5a2518a2464.jpg",
+      "caption": "",
+      "width": 378,
+      "height": 280,
+      "uploader": "shared",
+      "createdAt": 1793472334714,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=738be8f9-3900-454a-a137-b5a2518a2464"
+    },
+    {
+      "id": "c1cc4371-04f3-4dc7-990b-522e94e513eb",
+      "path": "photos/c1cc4371-04f3-4dc7-990b-522e94e513eb.jpg",
+      "caption": "",
+      "width": 900,
+      "height": 1600,
+      "uploader": "shared",
+      "createdAt": 1793472335869,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=c1cc4371-04f3-4dc7-990b-522e94e513eb"
+    }
+  ]
+}

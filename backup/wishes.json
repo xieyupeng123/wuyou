@@ -1,0 +1,46 @@
+{
+  "syncedAt": "2026-11-01T09:45:57.706Z",
+  "wishes": [
+    {
+      "id": "6d2f4c81-b59d-4f5f-8eb6-d3ebc7bebda1",
+      "text": "去南京，吃一碗鸭血粉丝汤",
+      "author": "伽塔",
+      "createdAt": 1793460777284
+    },
+    {
+      "id": "788c045f-614a-4d01-be22-09f13aad6f9d",
+      "text": "你好呀，很高兴认识你",
+      "author": "伽塔",
+      "createdAt": 1793469811680
+    },
+    {
+      "id": "a922cf81-73a5-4da3-8672-eba5adf6d7c3",
+      "text": "尝尝谢大厨的手艺）",
+      "author": "归无",
+      "createdAt": 1793471298021
+    },
+    {
+      "id": "73d0d620-e02f-48dc-8518-d5da69c133a8",
+      "text": "你永远都是我的挚友，谢谢你",
+      "author": "伽塔",
+      "createdAt": 1793472146717,
+      "status": "open",
+      "doneAt": 1793523740571,
+      "archivedAt": 1793524838297
+    },
+    {
+      "id": "9020dcbd-0f9c-4095-bfbd-d7aeeef580ef",
+      "text": "去爬峨眉山",
+      "author": "伽塔",
+      "createdAt": 1793513242548
+    },
+    {
+      "id": "7329301f-a8ca-4d11-b008-4ff62c25ea50",
+      "text": "我要去学Da capo",
+      "author": "伽塔",
+      "createdAt": 1793513518979,
+      "status": "open",
+      "archivedAt": 1793522342961
+    }
+  ]
+}
