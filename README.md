@@ -50,11 +50,11 @@ dist/og.jpg
 https://wuyou-album.netlify.app/.netlify/functions/album
 ```
 
-浏览公开；上传、改说明、删除需要 `X-Album-Key`。最多 10000 张，单张原图 8MB 内，浏览器会先压缩到 1600px / JPEG 0.84。照片会同步给所有打开网站的人，请只上传愿意共享的内容。
+浏览公开；上传、改说明、删除需要 `X-Album-Key`。最多 100000 张，单张原图 8MB 内，浏览器会先压缩到 1600px / JPEG 0.84。照片会同步给所有打开网站的人，请只上传愿意共享的内容。
 
 约定清单也走同一个 Function，`GET ?wishes=1` 读取、`POST {action:"wish"}` 新增，双方都可以在页面里添加；最多 100 条。
 
-时间胶囊也走同一个 Function：`GET ?notes=1` 读取、`POST {action:"note"}` 新增、`POST {action:"note-status"}` 完成或归档，双方刷新后都能看见；页面不提供删除，只保留完成与归档，最多 500 条。旧版本地留言会在首次打开时自动迁移到新存储，原始日期会保留。相册支持导出 / 恢复 JSON 备份。
+时间胶囊也走同一个 Function：`GET ?notes=1` 读取、`POST {action:"note"}` 新增、`POST {action:"note-status"}` 完成或归档，双方刷新后都能看见；页面不提供删除，只保留完成与归档，最多 500 条。照片列表支持 `?limit=24&offset=0&uploader=all|jia|gui|shared` 分页和按上传者筛选；不传分页参数时返回全部（备份脚本使用）。旧版本地留言会在首次打开时自动迁移到新存储，原始日期会保留。相册支持导出 / 恢复 JSON 备份。
 
 ## 自动备份到 GitHub
 
