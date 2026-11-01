@@ -1,0 +1,60 @@
+name: storage-warning
+
+on:
+  schedule:
+    # 03:40 Asia/Shanghai, every day.
+    - cron: "40 19 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Read current storage usage
+        id: usage
+        run: |
+          curl -fsS "https://wuyou-album.netlify.app/.netlify/functions/album?storage=1" -o storage.json
+          cat storage.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const d = JSON.parse(fs.readFileSync('storage.json', 'utf8'));
+          const alert = Number(d.percent) >= 90 ? 'true' : 'false';
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `alert=${alert}\n`);
+          console.log(`used=${d.used} limit=${d.limit} percent=${d.percent}`);
+          NODE
+
+      - name: Open a warning issue (GitHub emails the owner)
+        if: steps.usage.outputs.alert == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "存储空间已用 90%";
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "storage-warning"
+            });
+            if (open.data.some((item) => item.title === title)) {
+              core.info("A storage-warning issue is already open.");
+              return;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              labels: ["storage-warning"],
+              assignees: [context.repo.owner],
+              body: [
+                "@xieyupeng123 共享相册的 R2 存储已经达到 90%。",
+                "",
+                "请打开 Cloudflare R2 检查 `wuyou-photos` 的用量，并按需要扩容到 30GB，或先备份后清理旧照片。",
+                "",
+                "这条提醒由 GitHub Actions 每天 03:40 检查一次，不会出现在网站前端。"
+              ].join("\n")
+            });
