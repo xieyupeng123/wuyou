@@ -13,13 +13,26 @@ async function get(query = "") {
 
 await fs.mkdir(albumDir, { recursive: true });
 
-const [album, wishes, notes] = await Promise.all([
-  get(""),
+async function allPhotos() {
+  let offset = 0;
+  let total = Infinity;
+  const photos = [];
+  while (offset < total) {
+    const page = await get(`?limit=120&offset=${offset}&uploader=all`);
+    const batch = Array.isArray(page.photos) ? page.photos : [];
+    photos.push(...batch);
+    total = Number(page.total) || 0;
+    offset = photos.length;
+    if (!batch.length) break;
+  }
+  return photos;
+}
+
+const [photos, wishes, notes] = await Promise.all([
+  allPhotos(),
   get("?wishes=1"),
   get("?notes=1"),
 ]);
-
-const photos = Array.isArray(album.photos) ? album.photos : [];
 const keep = new Set();
 
 for (const photo of photos) {
@@ -55,7 +68,7 @@ await fs.writeFile(
 );
 await fs.writeFile(
   path.join(root, "README.md"),
-  `# 無有 · 自动备份\n\n- \`album/\`：共享相册原图\n- \`album.json\`：照片信息\n- \`wishes.json\`：想一起做的事\n- \`notes.json\`：写给未来的话\n\n由 GitHub Actions 每 30 分钟从站点同步；内容没有变化时不会产生提交。\n`
+  `# 無有 · 自动备份\n\n- \`album/\`：共享相册原图\n- \`album.json\`：照片信息\n- \`wishes.json\`：想一起做的事\n- \`notes.json\`：写给未来的话\n\n由 GitHub Actions 每 5 分钟从站点同步；内容没有变化时不会产生提交。\n`
 );
 
 console.log(`backup: ${photos.length} photos, ${(wishes.wishes || []).length} wishes, ${(notes.notes || []).length} notes`);
