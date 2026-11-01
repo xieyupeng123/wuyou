@@ -65,11 +65,13 @@ https://wuyou-album.netlify.app/.netlify/functions/album
 
 约定清单也走同一个 Function，`GET ?wishes=1` 读取、`POST {action:"wish"}` 新增，双方都可以在页面里添加；最多 100 条。
 
-时间胶囊也走同一个 Function：`GET ?notes=1` 读取、`POST {action:"note"}` 新增、`POST {action:"note-status"}` 完成或归档，双方刷新后都能看见；页面不提供删除，只保留完成与归档，最多 500 条。照片列表支持 `?limit=24&offset=0&uploader=all|jia|gui|shared` 分页和按上传者筛选；不传分页参数时返回全部（备份脚本使用）。旧版本地留言会在首次打开时自动迁移到新存储，原始日期会保留。相册支持导出 / 恢复 JSON 备份。
+时间胶囊也走同一个 Function：`GET ?notes=1` 读取、`POST {action:"note"}` 新增、`POST {action:"note-status"}` 完成或归档，双方刷新后都能看见；页面不提供删除，只保留完成与归档，最多 500 条。每条留言带作者（伽塔 / 归无）和精确到分钟的日期。照片列表支持 `?limit=24&offset=0&uploader=all|jia|gui|shared` 分页和按上传者筛选；不传分页参数时返回全部（备份脚本使用）。旧版本地留言会在首次打开时自动迁移到新存储，原始日期会保留。相册支持导出 / 恢复 JSON 备份。
+
+`GET ?storage=1` 返回 R2 用量（`used` / `limit` / `percent` / `photos`），只供后台和自动化使用，不显示在前端。`.github/workflows/storage-warning.yml` 每天 03:40 检查一次，达到 90% 会创建一条 `storage-warning` issue 并 @ 仓库所有者，由 GitHub 发送邮件提醒。
 
 ## 自动备份到 GitHub
 
-`.github/workflows/backup.yml` 每天 04:17（Asia/Shanghai）兜底同步一次；任何照片、约定、留言发生变化时，Netlify Function 会立即触发 `repository_dispatch` 备份（GitHub Actions 可能排队延迟）：
+`.github/workflows/backup.yml` 每天 03:40（Asia/Shanghai）兜底同步一次；任何照片、约定、留言发生变化时，Netlify Function 会立即触发 `repository_dispatch` 备份（GitHub Actions 可能排队延迟）：
 
 - `backup/album/`：共享相册原图
 - `backup/album.json`：照片信息
