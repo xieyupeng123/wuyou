@@ -2,8 +2,8 @@ name: backup-content
 
 on:
   schedule:
-    # 04:17 Asia/Shanghai, once a day as a safety net.
-    - cron: "17 20 * * *"
+    # 03:40 Asia/Shanghai, once a day as a safety net.
+    - cron: "40 19 * * *"
   repository_dispatch:
     types: [content-changed]
   workflow_dispatch:
