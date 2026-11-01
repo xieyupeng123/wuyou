@@ -6,9 +6,33 @@ const root = "backup";
 const albumDir = path.join(root, "album");
 
 async function get(query = "") {
-  const response = await fetch(`${API}${query}`);
-  if (!response.ok) throw new Error(`${query || "album"} HTTP ${response.status}`);
-  return response.json();
+  let lastError;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      const response = await fetch(`${API}${query}`, { signal: AbortSignal.timeout(30000) });
+      if (!response.ok) throw new Error(`${query || "album"} HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+      await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
+    }
+  }
+  throw lastError;
+}
+
+async function fetchBuffer(url) {
+  let lastError;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      const response = await fetch(url, { signal: AbortSignal.timeout(30000) });
+      if (!response.ok) throw new Error(`image HTTP ${response.status}`);
+      return Buffer.from(await response.arrayBuffer());
+    } catch (error) {
+      lastError = error;
+      await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
+    }
+  }
+  throw lastError;
 }
 
 await fs.mkdir(albumDir, { recursive: true });
@@ -28,11 +52,9 @@ async function allPhotos() {
   return photos;
 }
 
-const [photos, wishes, notes] = await Promise.all([
-  allPhotos(),
-  get("?wishes=1"),
-  get("?notes=1"),
-]);
+const photos = await allPhotos();
+const wishes = await get("?wishes=1");
+const notes = await get("?notes=1");
 const keep = new Set();
 
 for (const photo of photos) {
@@ -42,9 +64,7 @@ for (const photo of photos) {
   try {
     await fs.access(file);
   } catch (error) {
-    const response = await fetch(photo.src);
-    if (!response.ok) throw new Error(`image ${photo.id} HTTP ${response.status}`);
-    await fs.writeFile(file, Buffer.from(await response.arrayBuffer()));
+    await fs.writeFile(file, await fetchBuffer(photo.src));
   }
 }
 
