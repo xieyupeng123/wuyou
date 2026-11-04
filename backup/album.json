@@ -1,6 +1,28 @@
 {
   "photos": [
     {
+      "id": "adbdac56-1a35-4998-8efc-153aa56fc2e3",
+      "path": "photos/adbdac56-1a35-4998-8efc-153aa56fc2e3.jpg",
+      "caption": "",
+      "width": 1600,
+      "height": 605,
+      "uploader": "xyp",
+      "size": 113355,
+      "createdAt": 1793814199635,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=adbdac56-1a35-4998-8efc-153aa56fc2e3"
+    },
+    {
+      "id": "af85875b-7919-4425-bfea-fec6d12242ee",
+      "path": "photos/af85875b-7919-4425-bfea-fec6d12242ee.jpg",
+      "caption": "",
+      "width": 1538,
+      "height": 557,
+      "uploader": "xyp",
+      "size": 109497,
+      "createdAt": 1793814197656,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=af85875b-7919-4425-bfea-fec6d12242ee"
+    },
+    {
       "id": "4ec5c175-8a5d-4163-a75f-6c54d527dc11",
       "path": "photos/4ec5c175-8a5d-4163-a75f-6c54d527dc11.jpg",
       "caption": "老大看我在云服务器上部署的Deep seek R1模型",
