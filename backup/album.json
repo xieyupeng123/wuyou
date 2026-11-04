@@ -243,28 +243,6 @@
       "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=626c3d98-73c2-4c14-8265-f62bac1d9e94"
     },
     {
-      "id": "e6a6cedf-edf8-43a4-a9dd-891376b6645f",
-      "path": "photos/e6a6cedf-edf8-43a4-a9dd-891376b6645f.jpg",
-      "caption": "",
-      "width": 1200,
-      "height": 1600,
-      "uploader": "xyp",
-      "size": 160704,
-      "createdAt": 1793551939740,
-      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=e6a6cedf-edf8-43a4-a9dd-891376b6645f"
-    },
-    {
-      "id": "b63f3a46-3592-406c-805d-81d94cf073e3",
-      "path": "photos/b63f3a46-3592-406c-805d-81d94cf073e3.jpg",
-      "caption": "",
-      "width": 1200,
-      "height": 1600,
-      "uploader": "xyp",
-      "size": 179937,
-      "createdAt": 1793551937141,
-      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=b63f3a46-3592-406c-805d-81d94cf073e3"
-    },
-    {
       "id": "a20d316f-bedc-4f15-8b4d-254f487e1b50",
       "path": "photos/a20d316f-bedc-4f15-8b4d-254f487e1b50.jpg",
       "caption": "",
