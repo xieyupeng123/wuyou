@@ -1,6 +1,17 @@
 {
   "photos": [
     {
+      "id": "d0995b05-e839-4304-8900-7dc38a2e16f2",
+      "path": "photos/d0995b05-e839-4304-8900-7dc38a2e16f2.jpg",
+      "caption": "",
+      "width": 1600,
+      "height": 900,
+      "uploader": "xyp",
+      "size": 245256,
+      "createdAt": 1793821961796,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=d0995b05-e839-4304-8900-7dc38a2e16f2"
+    },
+    {
       "id": "adbdac56-1a35-4998-8efc-153aa56fc2e3",
       "path": "photos/adbdac56-1a35-4998-8efc-153aa56fc2e3.jpg",
       "caption": "老大，我在训练声音模型",
