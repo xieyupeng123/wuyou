@@ -1,6 +1,28 @@
 {
   "photos": [
     {
+      "id": "f6dea437-76bc-4d80-acf3-9aa19370014d",
+      "path": "photos/f6dea437-76bc-4d80-acf3-9aa19370014d.jpg",
+      "caption": "依旧是只有老板一个人",
+      "width": 1600,
+      "height": 900,
+      "uploader": "xyp",
+      "size": 160695,
+      "createdAt": 1793857324628,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=f6dea437-76bc-4d80-acf3-9aa19370014d"
+    },
+    {
+      "id": "3f2c6bf1-364f-4ec1-8ee1-af750e254535",
+      "path": "photos/3f2c6bf1-364f-4ec1-8ee1-af750e254535.jpg",
+      "caption": "",
+      "width": 1600,
+      "height": 900,
+      "uploader": "xyp",
+      "size": 252177,
+      "createdAt": 1793857323033,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=3f2c6bf1-364f-4ec1-8ee1-af750e254535"
+    },
+    {
       "id": "59f0a3a5-3879-4a6d-8da6-c54bbe99db49",
       "path": "photos/59f0a3a5-3879-4a6d-8da6-c54bbe99db49.jpg",
       "caption": "",
