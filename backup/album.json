@@ -1,6 +1,17 @@
 {
   "photos": [
     {
+      "id": "cf6760c5-4ffc-416c-b581-6ca0a86dfc2b",
+      "path": "photos/cf6760c5-4ffc-416c-b581-6ca0a86dfc2b.jpg",
+      "caption": "",
+      "width": 1600,
+      "height": 720,
+      "uploader": "wc",
+      "size": 149283,
+      "createdAt": 1793978164931,
+      "src": "https://wuyou-album.netlify.app/.netlify/functions/album?image=cf6760c5-4ffc-416c-b581-6ca0a86dfc2b"
+    },
+    {
       "id": "7103c8ad-ab17-48b0-966b-52c50432c1db",
       "path": "photos/7103c8ad-ab17-48b0-966b-52c50432c1db.jpg",
       "caption": "",
