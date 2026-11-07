@@ -438,6 +438,7 @@ export default {
           const targetId = String(body.targetId || "");
           const text = String(body.text || "").trim().slice(0, 180);
           const author = String(body.author || "").trim().slice(0, 12) || "我们";
+          const parentId = String(body.parentId || "").slice(0, 80);
           if (!["photo", "wish", "note"].includes(targetType) || !targetId || !text) {
             return json({ error: "回复内容不完整" }, 400);
           }
@@ -454,6 +455,17 @@ export default {
           }
           if (!exists) return json({ error: "被回复的内容不存在" }, 404);
           const replies = await readReplies(env);
+          let parent = null;
+          if (parentId) {
+            parent = replies.find(
+              (item) =>
+                item &&
+                item.id === parentId &&
+                item.targetType === targetType &&
+                item.targetId === targetId
+            );
+            if (!parent) return json({ error: "被回复的留言不存在" }, 404);
+          }
           if (replies.length >= MAX_REPLIES) return json({ error: "回复已经存满" }, 409);
           const reply = {
             id: crypto.randomUUID(),
@@ -461,7 +473,8 @@ export default {
             targetId,
             author,
             text,
-            createdAt: Date.now()
+            createdAt: Date.now(),
+            ...(parent ? { parentId: parent.id } : {})
           };
           replies.push(reply);
           await writeReplies(env, replies);
