@@ -44,34 +44,40 @@ dist/og.jpg
 
 ## 共享相册
 
-照片上传到 Netlify Function：
+后端已迁移到 Cloudflare，前端统一请求：
 
 ```text
-https://wuyou-album.netlify.app/.netlify/functions/album
+https://wuyou-api.pages.dev/
 ```
 
-图片文件主存储是 Cloudflare R2（bucket `wuyou-photos`，私有），Function 只做上传、鉴权和读取代理；R2 未配置或读取失败时自动回退到 Netlify Blobs。Netlify 环境变量需要 `R2_ACCOUNT_ID`、`R2_ACCESS_KEY_ID`、`R2_SECRET_ACCESS_KEY`、`R2_BUCKET`。
+- 运行时：Cloudflare Worker `wuyou-api`，绑定 R2 bucket `wuyou-photos`。
+- 公开入口：Cloudflare Pages 项目 `wuyou-api`，用 Functions 反向代理 Worker（`workers.dev` 在中国大陆会被 DNS 污染）。
+- 元数据：R2 的 `meta/album.json`、`meta/wishes.json`、`meta/notes.json`、`meta/notes-reset.json`、`meta/replies.json`、`meta/visits.json`、`meta/presence.json`。
+- 照片：R2 的 `photos/<id>.jpg`；`?image=<id>` 由 Worker 读取并返回。
+- Worker 源码：`D:\无定义\browser\wuyou-worker`；Netlify 后端保留为历史回退，不再是线上依赖。
 
 浏览公开；上传、改说明、删除需要 `X-Album-Key`。应用上限 100000 张，单张原图 8MB 内，浏览器会先压缩到 1600px / JPEG 0.84。照片会同步给所有打开网站的人，请只上传愿意共享的内容。
 
-为什么不保留原画质：8MB 原图 × 100000 张约 800GB，任何免费方案都放不下；压缩后实测约 150–300KB/张（这 110 张平均约 303KB）。R2 免费 10GB 大约能放 3–6 万张；要真正放满 100000 张，需要把 R2 升到约 30GB，按 $0.015/GB·月计算，超出部分约 $0.30/月。画质仍足够手机和网页浏览。
+为什么不保留原画质：8MB 原图 × 100000 张约 800GB，任何免费方案都放不下；压缩后实测约 150–300KB/张。R2 免费 10GB 大约能放 3–6 万张；要真正放满 100000 张，需要把 R2 升到约 30GB，按 $0.015/GB·月计算，超出部分约 $0.30/月。画质仍足够手机和网页浏览。
 
 ### 存储架构
 
 - 图片文件：Cloudflare R2 `wuyou-photos`（私有 bucket，不直接公开）。
-- 元数据：Netlify Blobs 的 `manifest.json`；图片读取走 Function `?image=<id>` 代理。
-- 迁移：`POST {action:"migrate-r2", offset, limit}` 把 Blobs 里的旧图搬到 R2 并从 Blobs 删除；本次已迁移 110 张。
+- JSON 元数据：R2 的 `meta/*.json`，由 Worker 读写。
+- 图片读取走 Worker `?image=<id>` 代理；不再依赖 Netlify Blobs。
 - 容量：R2 免费 10GB，按实测约 3–6 万张；100000 张建议扩容到约 30GB，费用很低。GitHub 仓库只做冷备份，不做图床。
 
-约定清单也走同一个 Function，`GET ?wishes=1` 读取、`POST {action:"wish"}` 新增，双方都可以在页面里添加；最多 100 条。
+约定清单也走同一个 Worker，`GET ?wishes=1` 读取、`POST {action:"wish"}` 新增，双方都可以在页面里添加；最多 100 条。
 
-时间胶囊也走同一个 Function：`GET ?notes=1` 读取、`POST {action:"note"}` 新增、`POST {action:"note-status"}` 完成或归档，双方刷新后都能看见；页面不提供删除，只保留完成与归档，最多 500 条。每条留言带作者（伽塔 / 归无）和精确到分钟的日期。照片列表支持 `?limit=24&offset=0&uploader=all|jia|gui|shared` 分页和按上传者筛选；不传分页参数时返回全部（备份脚本使用）。旧版本地留言会在首次打开时自动迁移到新存储，原始日期会保留。相册支持导出 / 恢复 JSON 备份。
+时间胶囊也走同一个 Worker：`GET ?notes=1` 读取、`POST {action:"note"}` 新增、`POST {action:"note-status"}` 完成或归档，双方刷新后都能看见；页面不提供删除，只保留完成与归档，最多 500 条。每条留言带作者（伽塔 / 归无）和精确到分钟的日期。照片列表支持 `?limit=24&offset=0&uploader=all|jia|gui|shared` 分页和按上传者筛选；不传分页参数时返回全部（备份脚本使用）。旧版本地留言会在首次打开时自动迁移到新存储，原始日期会保留。相册支持导出 / 恢复 JSON 备份。
+
+照片、约定、留言都支持公开回复；回复列表按目标读取，写入需要共享口令，只有后台管理接口需要 `X-Admin-Key`。访问记录仍然完全隐藏在前端，只在后台 `?stats=1` / `?visits=1` 查看。
 
 `GET ?storage=1` 返回 R2 用量（`used` / `limit` / `percent` / `photos`），只供后台和自动化使用，不显示在前端。`.github/workflows/storage-warning.yml` 每天 03:40 检查一次，达到 90% 会创建一条 `storage-warning` issue 并 @ 仓库所有者，由 GitHub 发送邮件提醒。
 
 ## 自动备份到 GitHub
 
-`.github/workflows/backup.yml` 每天 03:40（Asia/Shanghai）兜底同步一次；任何照片、约定、留言发生变化时，Netlify Function 会立即触发 `repository_dispatch` 备份（GitHub Actions 可能排队延迟）：
+`.github/workflows/backup.yml` 每天 03:40（Asia/Shanghai）兜底同步一次；任何照片、约定、留言发生变化时，Cloudflare Worker 会立即触发 `repository_dispatch` 备份（GitHub Actions 可能排队延迟）：
 
 - `backup/album/`：共享相册原图
 - `backup/album.json`：照片信息
