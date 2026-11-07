@@ -1,9 +1,0 @@
-name = "wuyou-api"
-main = "src/index.js"
-compatibility_date = "2026-11-01"
-account_id = "1c70e1c948d428d55d5b1db57fd2093d"
-workers_dev = true
-
-[[r2_buckets]]
-binding = "BUCKET"
-bucket_name = "wuyou-photos"
