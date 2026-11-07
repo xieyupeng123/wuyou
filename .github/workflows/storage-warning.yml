@@ -18,7 +18,7 @@ jobs:
       - name: Read current storage usage
         id: usage
         run: |
-          curl -fsS "https://wuyou-album.netlify.app/.netlify/functions/album?storage=1" -o storage.json
+          curl -fsS "https://wuyou-api.pages.dev/?storage=1" -o storage.json
           cat storage.json
           node - <<'NODE'
           const fs = require('fs');
