@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const API = "https://wuyou-album.netlify.app/.netlify/functions/album";
+const API = "https://wuyou-api.pages.dev/";
 const root = "backup";
 const albumDir = path.join(root, "album");
 
