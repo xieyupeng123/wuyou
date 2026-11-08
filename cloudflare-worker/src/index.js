@@ -271,16 +271,29 @@ export default {
       if (
         method === "GET" &&
         (url.searchParams.get("replies") ||
+          url.searchParams.get("reply-counts") ||
           url.searchParams.get("visits") ||
           url.searchParams.get("stats") ||
           url.searchParams.get("geo"))
       ) {
         const publicReplyQuery =
-          url.searchParams.get("replies") &&
-          url.searchParams.get("targetType") &&
-          url.searchParams.get("targetId");
+          url.searchParams.get("reply-counts") ||
+          (url.searchParams.get("replies") &&
+            url.searchParams.get("targetType") &&
+            url.searchParams.get("targetId"));
         if (!publicReplyQuery && !isAdmin(request, env)) {
           return json({ error: "仅限后台查看" }, 401);
+        }
+
+        if (url.searchParams.get("reply-counts")) {
+          const replies = await readReplies(env);
+          const counts = {};
+          replies.forEach((reply) => {
+            if (!reply || !reply.targetType || !reply.targetId) return;
+            const key = `${reply.targetType}:${reply.targetId}`;
+            counts[key] = (counts[key] || 0) + 1;
+          });
+          return json({ counts });
         }
 
         if (url.searchParams.get("stats")) {
