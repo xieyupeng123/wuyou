@@ -653,6 +653,25 @@ export default {
           return json({ ok: true, photo: publicPhoto(photo, publicOrigin(request)) });
         }
 
+        if (body.action === "uploader") {
+          if (!isAdmin(request, env)) return json({ error: "仅限后台操作" }, 401);
+          const ids = new Set((Array.isArray(body.ids) ? body.ids : [body.id]).map(String).filter(Boolean));
+          const uploader = String(body.uploader || "").trim().slice(0, 20);
+          if (!ids.size) return json({ error: "缺少照片 id" }, 400);
+          if (!uploader) return json({ error: "缺少上传者" }, 400);
+          const manifest = await readManifest(env);
+          let changed = 0;
+          manifest.photos.forEach((photo) => {
+            if (photo && ids.has(photo.id) && photo.uploader !== uploader) {
+              photo.uploader = uploader;
+              changed += 1;
+            }
+          });
+          await writeManifest(env, manifest);
+          scheduleBackup(env, ctx);
+          return json({ ok: true, changed });
+        }
+
         if (typeof body.image !== "string") return json({ error: "缺少图片数据" }, 400);
         const match = body.image.match(/^data:image\/(jpeg|png|webp);base64,(.+)$/);
         if (!match) return json({ error: "图片格式不支持" }, 400);
